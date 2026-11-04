@@ -175,6 +175,116 @@ Keep authorization identifiers stable and customize labels separately:
   scope server-side, in the same site, rather than trusting a role selector or
   client-side route guard.
 
+### One standard product, configurable per site
+
+The goal is not one giant deployment that must be online to every client. It is
+one versioned product and one configuration model, with the option to run the
+client data plane locally:
+
+- **Control plane (Zander-operated):** central site registry, site-code
+  assignments, configuration versions, license/release metadata, and the
+  centrally authenticated support/admin portal. Keep this database limited to
+  control-plane data unless a customer explicitly chooses cloud-hosted WMS data.
+- **Site data plane (client-operated):** the standard web/API release and that
+  client's PostgreSQL data. Keep client operational records and credentials in
+  the client's environment for on-prem deployments.
+- **Configuration channel:** the on-prem site initiates an outbound,
+  mutually-authenticated connection to fetch a signed, versioned configuration
+  bundle. Do not expose the client's database or an unauthenticated admin API
+  to the internet. A site with no outbound access can import the same signed
+  bundle through an approved offline deployment process.
+- **Admin portal:** a Zander platform operator may select a site only after
+  strong authentication (MFA), an explicit support grant, and audited
+  site-scoped authorization. The client's Site Super Admin manages only their
+  own site. These are separate authorities even if the UI uses similar labels.
+
+This allows an operator at Zander or an authorized operator at the client to
+use the same standard portal and manage the same site configuration. At the
+client, the portal can talk directly to the local API. From Zander, access must
+go through the approved outbound relay/agent or the client's VPN; a local-only
+API is not magically reachable from the cloud. The agent should accept only
+signed, versioned, allow-listed configuration changes and report its applied
+version. Remote support access should be time-bounded, revocable, and audited;
+avoid a shared global account or silent impersonation.
+
+For the first increment, preserve today's PostgreSQL tenant schemas and data
+layout. Add control-plane configuration records keyed by stable `site_id`, and
+adapt the API/web to load those records as runtime configuration. This avoids
+moving business tables while separating customization from client-specific
+code. Continue using the same API artifact/image at each site; the site-specific
+database URL, secrets, and connection pool remain deployment secrets, not
+control-plane values sent to the browser. The current web runtime config already
+demonstrates one web image selected by tenant runtime config, but the reviewed
+API still has environment-specific DB profiles and there is no remote
+configuration agent/control-plane channel yet.
+
+Initially map each existing `public.tbl_tenant.tenantId` to the new stable
+control-plane `site_id`; keep existing `schemaName` and login resolution working
+through a compatibility adapter. The control plane should not duplicate
+passwords or business data from the tenant database.
+
+Store configuration as normalized, versioned records rather than client forks:
+
+| Concern | Stable key / record | Site-specific value |
+|---|---|---|
+| Site | `site_id`; unique six-digit `site_code` lookup | display name, enabled state, supported release |
+| Roles | immutable `role_key` such as `HEAD` or `STAFF` | alias such as “Warehouse Lead” |
+| Departments | immutable `department_key` | display name, enabled state, order |
+| Sub-departments | immutable key scoped to department | display name, enabled state, order |
+| Terms | semantic `term_key` such as `STAFF_LABEL` | translated/customer-facing label |
+| Permissions | stable role/action/resource keys | permitted grants within a bounded policy |
+| Site features | stable feature keys | enabled values and validated settings |
+
+Web components should render labels from a versioned configuration response.
+API routes, database column names, authorization checks, and integration
+contracts must use stable keys, never aliases. A label change should not require
+a schema migration or alter a user's authority. Use configuration validation,
+preview, publish/rollback, and an audit record for each change. Cache the
+active version at each site so normal work continues during a control-plane
+outage; show whether a site is current or has unapplied changes.
+
+Do not make the Super Admin UI a general-purpose SQL editor or allow arbitrary
+runtime role creation to grant privilege. Offer a curated role catalog and
+permission templates; allow bounded overrides, with high-risk grants requiring
+explicit approval and audit. Keep “platform operator”, “site super admin”,
+“Head”, “Manager”, and “Staff” as distinct stable authority keys. Customer
+aliases affect only display text.
+
+### Minimal migration plan
+
+1. **Stabilize identity first:** map current `tbl_role.role_id` values to
+   canonical immutable role keys while preserving the old IDs for backward
+   compatibility. Introduce a separate display-alias lookup; stop treating
+   editable `role_name` as the authorization source. Add the six-digit
+   `site_code` as a unique site registry field; do not overload `tenantCode` or
+   the existing four-digit `appcode`.
+2. **Make configuration data-driven:** add site-scoped department,
+   sub-department, term/alias, feature, and role-permission configuration with
+   a version number. First migrate today's labels and grants into defaults so
+   existing clients see no behavior change. Add API read/update/publish
+   endpoints with validation and audit.
+3. **Separate modules in the code, not deployments:** introduce bounded API
+   services/modules for identity, authorization, site configuration, user
+   lifecycle, and audit. Keep the existing endpoints as compatibility adapters
+   to those services; migrate the web client incrementally. Avoid per-customer
+   branches and new schema copies just to rename “Head” or “Department”.
+4. **Support remote administration:** first let the site API load local
+   configuration. Then add the central registry and outbound site agent for
+   remote changes, with signed revisions, acknowledgement, rollback, and
+   offline behavior. A central portal without that connection (or VPN) can
+   administer only cloud-hosted site data, not a customer's isolated database.
+5. **Harden auth before rollout:** replace reversible Base64/no-op credential
+   handling with Argon2id or BCrypt and a migration-on-success strategy;
+   revoke existing sessions on administrative reset; remove secrets from logs;
+   test the hierarchy and every tenant/site boundary server-side.
+
+This is a gradual transition. Do not consolidate all current tenant schemas
+into one shared schema as a prerequisite. A future row-level multi-tenant model
+could reduce schema management, but it is a separate migration with much
+greater isolation and regression risk. The first modularity win is standard
+code plus configuration and stable identities, not an immediate database
+rewrite.
+
 One possible PostgreSQL core schema (illustrative, not yet applied):
 
 ```sql
@@ -276,13 +386,57 @@ CREATE TABLE security_audit (
     FOREIGN KEY (site_id, subject_user_id)
         REFERENCES app_user(site_id, user_id)
 );
+
+CREATE TABLE site_department (
+    site_id UUID NOT NULL REFERENCES site(site_id),
+    department_key TEXT NOT NULL,
+    display_label TEXT NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (site_id, department_key)
+);
+
+CREATE TABLE site_subdepartment (
+    site_id UUID NOT NULL,
+    department_key TEXT NOT NULL,
+    subdepartment_key TEXT NOT NULL,
+    display_label TEXT NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (site_id, department_key, subdepartment_key),
+    FOREIGN KEY (site_id, department_key)
+        REFERENCES site_department(site_id, department_key)
+);
+
+CREATE TABLE site_role_permission (
+    site_id UUID NOT NULL REFERENCES site(site_id),
+    role_key TEXT NOT NULL REFERENCES role_catalog(role_key),
+    permission_key TEXT NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    PRIMARY KEY (site_id, role_key, permission_key)
+);
+
+CREATE TABLE site_config_revision (
+    site_id UUID NOT NULL REFERENCES site(site_id),
+    revision_no INTEGER NOT NULL,
+    status TEXT NOT NULL CHECK (status IN ('DRAFT', 'PUBLISHED', 'RETIRED')),
+    config_snapshot JSONB NOT NULL,
+    created_by UUID,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    published_at TIMESTAMPTZ,
+    PRIMARY KEY (site_id, revision_no),
+    FOREIGN KEY (site_id, created_by)
+        REFERENCES app_user(site_id, user_id)
+);
 ```
 
 In the full application, add a scoped warehouse/department assignment table and
 an append-only security audit table. Add indexes on `(site_id, login_id)`,
 `(site_id, manager_user_id)`, and pending reset requests. Enforce all role
 hierarchy rules in the API inside a transaction, and revoke existing sessions
-after a reset.
+after a reset. The revision snapshot is published atomically; the site agent
+only applies a verified `PUBLISHED` revision and reports the applied revision
+to the control plane.
 
 ### Recommended lifecycle and endpoint contract
 
@@ -294,36 +448,76 @@ after a reset.
 3. Login: `POST /auth/login` with `{ "siteCode", "userId", "password" }`.
    Resolve `siteCode` to `site_id`, validate credentials, then return a JWT
    containing stable `user_id`, `site_id`, and `role_key` claims.
-4. Forgotten password: `POST /auth/password-reset-requests` with site code and
-   user ID. Return a generic response and create a pending request visible to
-   the authorized approver; this is a manager-mediated reset, not an email
-   password reset.
-5. Approver: `POST /users/{userId}/password-reset`. Server verifies
-   same-site scope and role hierarchy, issues a per-user one-time temporary
-   secret (or activation link), sets `force_password_change = true`, revokes
-   sessions, and writes an audit event.
-6. First login after reset must lead to `POST /auth/password-change` with the
-   temporary credential and matching new/confirm values. Hash the new password,
-   clear `force_password_change`, and record a password-change audit event.
+4. Self-service forgot password: retain the existing token/email approach for
+   users who can access their verified recovery channel. Reuse its token
+   lifecycle only after correcting and testing expiry, one-time use, tenant
+   binding, rate limits, and generic responses that do not disclose whether an
+   account exists.
+5. Manager-mediated recovery: add
+   `POST /auth/password-reset-requests` with site code and user ID for users who
+   cannot use email. Return a generic response and create a pending request
+   visible to the authorized approver. Staff requests go to their assigned
+   Manager; Manager to Head; Head to the site Super Admin. The platform
+   operator is a separately granted escalation path, not an implicit
+   site-wide account.
+6. Approver: `POST /users/{userId}/password-reset`. The server verifies
+   same-site scope and the role hierarchy, issues a **per-user one-time random
+   reset secret or activation link** through a verified channel, sets
+   `force_password_change = true`, revokes sessions, expires prior reset
+   tokens, and writes an audit event. Never expose a shared literal password
+   such as `user` to all accounts or show the generated secret to the approver.
+7. First login after reset must require a password change through
+   `POST /auth/password-change`. Validate the new/confirm values, hash the new
+   password, clear `force_password_change`, and record a password-change audit
+   event. If the user lacks any verified recovery channel, use the
+   manager-mediated approval and a one-time credential that the user changes
+   immediately.
+
+**Recommendation:** use a hybrid, not either flow alone. Keep self-service
+email reset as the quickest path for ordinary users; provide the manager
+approval/reset path as a controlled fallback for warehouse users without
+reliable email. A manager-mediated request is safer than an unauthenticated
+public "set password to `user`" action, but it should issue a short-lived,
+single-use credential rather than a predictable shared default. The profile
+change form is useful, but a mandatory first-login change page is needed too,
+because a user may sign in on a scanner or another route without visiting the
+profile first.
 
 ```mermaid
 flowchart TD
-  CLI["One-time deployment bootstrap"] --> SA["SUPER_ADMIN account"]
-  SA -->|creates| HEAD["HEAD account"]
-  HEAD -->|creates| MAN["MANAGER account"]
-  MAN -->|creates within scope| STAFF["STAFF account"]
-  ALIAS["site_role_alias + site_term"] -. "display labels only" .-> SA
+  subgraph Control["Zander control plane"]
+    PORTAL["Admin portal<br/>MFA + site-scoped grants"]
+    REG["Site registry + config versions"]
+    PORTAL --> REG
+  end
+  subgraph Site["Client site data plane"]
+    AGENT["Outbound authenticated config agent"]
+    WEB["Standard web/API release"]
+    DB["Client PostgreSQL<br/>existing tenant schemas retained initially"]
+    AGENT -->|"verified config revision"| WEB
+    WEB --> DB
+  end
+  REG -->|"signed versioned config"| AGENT
+  LOCAL["Client operator on site/VPN"] --> PORTAL
+  SUPPORT["Zander operator<br/>approved time-bound support grant"] --> PORTAL
 
-  STAFF -->|forgot password; request keyed by site| REQ["Pending reset request"]
-  REQ -->|same-scope approver| MAN
-  MAN -->|resets Staff| TEMP["Per-user temporary credential<br/>force_password_change=true"]
-  MAN -. "Manager reset escalates to" .-> HEAD
-  HEAD -->|resets Manager| TEMP
-  HEAD -. "Head reset escalates to" .-> SA
-  SA -->|resets Head or any lower role| TEMP
-  TEMP --> LOGIN["Login at site code + user ID + temporary credential"]
-  LOGIN --> CHANGE["Profile / mandatory password change"]
-  CHANGE --> HASH["Store modern password hash<br/>clear force_password_change"]
+  BOOT["One-time bootstrap"] --> SA["Site SUPER_ADMIN"]
+  SA -->|creates| HEAD["HEAD"]
+  HEAD -->|creates| MAN["MANAGER"]
+  MAN -->|creates within scope| STAFF["STAFF"]
+  TERMS["Stable role/term keys<br/>+ site-specific aliases"] --> REG
+
+  STAFF -->|email available| SELF["Verified one-time reset link"]
+  STAFF -->|email unavailable| REQ["Manager-mediated request"]
+  REQ --> MAN
+  MAN -->|Manager recovery escalates| HEAD
+  HEAD -->|Head recovery escalates| SA
+  SA -->|approved reset| TEMP["One-time per-user credential<br/>force_password_change=true"]
+  MAN -->|approved Staff reset| TEMP
+  HEAD -->|approved Manager/Staff reset| TEMP
+  SELF --> CHANGE["Mandatory password change"]
+  TEMP --> CHANGE
+  CHANGE --> HASH["Store strong password hash<br/>revoke old sessions"]
 ```
 
 ## Existing picklist-start behavior
