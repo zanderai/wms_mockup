@@ -44,7 +44,8 @@ code,pre{font-family:var(--mono)}
 /* shell */
 .sb{position:fixed;inset:0 auto 0 0;z-index:20;width:228px;display:flex;flex-direction:column;border-right:1px solid var(--line);background:#fff}
 .sb .brand{padding:16px 18px;border-bottom:1px solid var(--line)}
-.nav{flex:1;overflow:auto;padding:8px 10px 16px}
+.nav{flex:1;overflow:auto;padding:8px 10px 16px;scrollbar-width:none;-ms-overflow-style:none}
+.nav::-webkit-scrollbar{display:none}
 .ni{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;border:0;border-radius:10px;background:none;padding:7px 10px;color:#4b5563;font-size:13px;font-weight:550;text-align:left}
 .ni:hover{background:var(--sidebar-hover)}
 .ni.on{background:var(--blue-soft);color:var(--sidebar-active-fg);font-weight:700}
@@ -456,6 +457,20 @@ pre{margin:0;overflow:auto;border-radius:12px;background:#111827;color:#f9fafb;p
 .invoice-search:focus-within{border-color:var(--primary);box-shadow:0 0 0 4px var(--ring-soft)}
 .invoice-search .ctl{min-height:34px;border:0;padding:5px 0;box-shadow:none}
 .invoice-search .ctl:focus{box-shadow:none}
+.checker-lookup-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px 20px}
+.checker-lookup-toolbar>.checker-lookup-filters{display:grid;grid-template-columns:180px minmax(240px,520px);align-items:end;justify-content:start;gap:8px;min-width:0}
+.checker-lookup-toolbar>.checker-lookup-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+.checker-lookup-date{width:180px;min-width:0}
+.checker-lookup-search{width:100%;min-width:0;min-height:40px}
+.checker-lookup-search .ctl{min-height:38px}
+.checker-lookup-date .ctl,.checker-lookup-search .ctl{width:100%;min-width:0}
+@media(max-width:1200px){.checker-lookup-toolbar{grid-template-columns:minmax(0,1fr)}
+.checker-lookup-toolbar>.checker-lookup-actions{justify-content:flex-start}}
+@media(max-width:600px){.checker-lookup-toolbar>.checker-lookup-filters{grid-template-columns:minmax(0,1fr)}
+.checker-lookup-date{width:100%}
+.checker-lookup-toolbar>.checker-lookup-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.checker-lookup-actions .ctl{width:100%;min-width:0!important}
+.checker-lookup-actions button{grid-column:1/-1;justify-self:start}}
 .invoice-pagination{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px}
 .invoice-pagination>div{display:flex;gap:6px}
 .outbound-selected-item .btn:not([data-a="outbound-column-reorder"]){min-width:44px;min-height:44px}
@@ -993,7 +1008,7 @@ pre{margin:0;overflow:auto;border-radius:12px;background:#111827;color:#f9fafb;p
 .heading-actions{gap:6px}
 .heading-actions .btn{min-height:35px;padding:7px 10px;font-size:11px}}
 .sidebar-icon{display:none}
-@media(min-width:821px){.sb{width:250px;overflow:visible;transition:width .44s cubic-bezier(.22,.75,.25,1)}
+@media(min-width:768px){.sb{width:250px;overflow:visible;transition:width .44s cubic-bezier(.22,.75,.25,1)}
 .shell:not(.sidebar-collapsed) .sb{width:250px}
 .shell.sidebar-collapsed .sb{width:96px;overflow:visible}
 .main{margin-left:250px;transition:margin-left .44s cubic-bezier(.22,.75,.25,1)}
@@ -1073,9 +1088,9 @@ pre{margin:0;overflow:auto;border-radius:12px;background:#111827;color:#f9fafb;p
 .sidebar-signout{display:inline-flex;min-height:44px;align-items:center;justify-content:center;gap:7px;flex:none;border:1px solid var(--line);border-radius:10px;background:#fff;padding:0 10px;color:var(--text-2);font-weight:650}
 .sidebar-signout:hover{border-color:var(--red-border);background:var(--red-soft);color:var(--red)}
 .sbf{white-space:normal}
-@media(min-width:821px){.sb .sidebar-account{display:grid}
+@media(min-width:768px){.sb .sidebar-account{display:grid}
 .sb .sidebar-user-copy{display:block}}
-@media(max-width:820px){.sidebar-footer{padding:12px}
+@media(max-width:767px){.sidebar-footer{padding:12px}
 .sidebar-account{display:grid;grid-template-columns:36px minmax(0,1fr);grid-template-areas:"avatar user" "view view" "signout signout";justify-items:stretch}
 .sidebar-user-copy{display:block;width:auto;max-width:none;opacity:1;visibility:visible}
 .sidebar-view{grid-area:view}
@@ -1194,6 +1209,18 @@ body:has(.outbound-check-full-page) .menu{display:none}
 #toast{right:var(--sp-3);left:var(--sp-3);bottom:var(--sp-3)}
 .toast{max-width:none}}
 @media(min-width:821px) and (max-width:900.99px){.content{padding:21px 15px 35px;padding-top:calc(var(--hit) + var(--sp-5))}}
+.picklist-assignment-overview{grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch}
+.picklist-assignment-overview h2{grid-column:1/-1}
+@media(max-width:1000px){.picklist-assignment-overview{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.picklist-assignment-overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(min-width:768px) and (max-width:1024px){.sb,.shell.sidebar-collapsed .sb{width:64px;overflow:visible}
+.shell.sidebar-collapsed .sb,.shell:not(.sidebar-collapsed) .sb{transform:none;visibility:visible;transition-delay:0s}
+.main,.shell.sidebar-collapsed .main,.shell:not(.sidebar-collapsed) .main{margin-left:64px}
+.shell:not(.sidebar-collapsed) .sb{z-index:40;width:250px;box-shadow:var(--popover-shadow)}
+.shell.sidebar-collapsed .nav{padding-right:6px;padding-left:6px}
+.shell.sidebar-collapsed .sidebar-footer{padding-right:5px;padding-left:5px}
+.content{padding-top:21px}
+#mn{display:none}}
 </style></head><body>
 <main id="login">
 <section class="login-art" aria-label="Zander Pharma WMS introduction">
@@ -1357,12 +1384,12 @@ const refreshLoginTerms=()=>{const id=`${termLabel("user")} ID`;document.querySe
 refreshLoginTerms();
 const ASG=[
 {k:"sa",name:"Jordan Davis",role:"Super Admin",dept:"All",sub:"—",wh:"*",scope:"All",status:"Active",source:"Manual",g:"*"},
-{k:"head",name:"Priya Nair",role:"Head",dept:"All",sub:"—",wh:WHS,scope:"All",status:"Active",source:"Manual",g:G("dashboard:v inbound-grn:vceax inbound-disc:vceax inventory-stock:vceax inventory-ledger:vx inventory-putaway:vceax inventory-transfer:vceax inventory-count:vceax outbound-orders:vceax outbound-pick:vceax outbound-check:vceax outbound-check-lookup:va outbound-submission:va returns-cases:vceax returns-inspect:vceax returns-disp:vceax audit:vx md-product:vcex md-manufacturer:vcex md-device:vcex md-batch:vcex md-tray:vcex")},
-{k:"pm",name:"Rahul Menon",role:"Manager",dept:"Outbound",sub:"Picking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-orders:v outbound-pick:vceax inventory-stock:v audit:v md-tray:vcex")},
+{k:"head",name:"Priya Nair",role:"Head",dept:"All",sub:"—",wh:WHS,scope:"All",status:"Active",source:"Manual",g:G("dashboard:v inbound-grn:vceax inbound-disc:vceax inventory-stock:vceax inventory-ledger:vx inventory-putaway:vceax inventory-transfer:vceax inventory-count:vceax outbound-orders:v outbound-pick:vceax outbound-check:vceax outbound-check-lookup:va outbound-picklist-assignment:va outbound-submission:va returns-cases:vceax returns-inspect:vceax returns-disp:vceax audit:vx md-product:vcex md-manufacturer:vcex md-device:vcex md-batch:vcex md-tray:vcex")},
+{k:"pm",name:"Rahul Menon",role:"Manager",dept:"Outbound",sub:"Picking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-orders:v outbound-pick:vceax outbound-picklist-assignment:va inventory-stock:v audit:v md-tray:vcex")},
 {k:"ps",name:"Taylor Brooks",role:"Staff",dept:"Outbound",sub:"Picking",wh:["WH-01"],scope:"Own records",status:"Active",source:"ERP",g:G("outbound-orders:v outbound-pick:ve inventory-stock:v")},
-{k:"cm",name:"Mina Patel",role:"Manager",dept:"Outbound",sub:"Checking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-check:vceax outbound-check-lookup:va outbound-submission:va outbound-orders:v audit:v")},
+{k:"cm",name:"Mina Patel",role:"Manager",dept:"Outbound",sub:"Checking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-check:vceax outbound-check-lookup:va outbound-picklist-assignment:va outbound-submission:va outbound-orders:v audit:v")},
 {k:"cs",name:"Arjun Rao",role:"Staff",dept:"Outbound",sub:"Checking",wh:["WH-01"],scope:"Own records",status:"Active",source:"Manual",g:G("outbound-orders:v outbound-check:ve")},
-{k:"dm",name:"Sara Iqbal",role:"Manager",dept:"Outbound",sub:"Picking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-orders:v outbound-pick:vceax inventory-stock:v audit:v md-tray:vcex")},
+{k:"dm",name:"Sara Iqbal",role:"Manager",dept:"Outbound",sub:"Picking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-orders:v outbound-pick:vceax outbound-picklist-assignment:va inventory-stock:v audit:v md-tray:vcex")},
 {k:"rm",name:"Dana Cole",role:"Manager",dept:"Inbound",sub:"Receiving",wh:WHS,scope:"Sub-department",source:"Manual",g:G("dashboard:v inbound-grn:vceax inbound-disc:vcea inventory-putaway:v inventory-stock:v audit:v md-product:vcex md-manufacturer:vcex md-device:vcex md-batch:vcex")},
 {k:"rs",name:"Omar Reyes",role:"Staff",dept:"Inbound",sub:"Receiving",wh:WHS,scope:"Own records",source:"Manual",g:G("inbound-grn:vce inbound-disc:vc inventory-putaway:ve")},
 {k:"im",name:"Ines Alva",role:"Manager",dept:"Inventory",sub:"Warehouse ops",wh:["WH-01"],scope:"Sub-department",source:"Manual",g:G("dashboard:v inventory-stock:vx inventory-ledger:vx inventory-putaway:vce inventory-transfer:vcea inventory-count:vceax audit:v")},
@@ -1419,7 +1446,7 @@ const persistModuleState=()=>{
 try{localStorage.setItem(MODULE_STATE_STORAGE_KEY,JSON.stringify(Object.fromEntries(Object.entries(MODS).map(([key,module])=>[key,module.en]))));return true}
 catch(error){console.error("Could not save module state.",error);toast("The module change is active for this session, but could not be saved in this browser.");return false}
 };
-const S={who:"sa",page:"dashboard",wh:"ALL",q:"",f:"",pk:"pm",dashboard:{mode:"cumulative",department:"Outbound"},lg:{q:"",mod:"",lvl:"",fail:0},dayEnd:{date:"",page:1},device:{page:1},deviceFleet:{query:""},batch:{page:1},orderInvoice:{_tab:"invoiced",get tab(){return this._tab},set tab(value){if(value!==this._tab)this.filter="all";this._tab=value},query:"",page:1,filter:"all",error:null},checkerLookup:{date:"2026-10-05",query:"",status:"all",checker:"all",page:1},submission:{query:"",filter:"modified",page:1},picking:{tab:"scan",floor:"",query:"",status:"",filter:"all",page:1},reports:{mode:"home",from:"2026-10-28",to:"2026-10-28",employee:"",batch:"",picklist:"",group:"",salesman:"",status:"",applied:false,deviceApplied:false,search:"",userSearch:"",view:"device",groupPage:1,groupStatus:"",groupSubmission:"",userId:"ps"},hc:[1,1,1,0,0,0,0]};
+const S={who:"sa",page:"dashboard",wh:"ALL",q:"",f:"",pk:"pm",dashboard:{mode:"cumulative",department:"Outbound"},lg:{q:"",mod:"",lvl:"",fail:0},dayEnd:{date:"",page:1},device:{page:1},deviceFleet:{query:""},batch:{page:1},orderInvoice:{_tab:"invoiced",get tab(){return this._tab},set tab(value){if(value!==this._tab)this.filter="all";this._tab=value},query:"",page:1,filter:"all",error:null},checkerLookup:{date:"2026-10-05",query:"",status:"all",checker:"all",page:1},picklistAssignment:{date:"2026-10-05",query:"",checkerId:"",filter:"available",page:1},submission:{query:"",filter:"modified",page:1},picking:{tab:"scan",floor:"",query:"",status:"",filter:"all",page:1},reports:{mode:"home",from:"2026-10-28",to:"2026-10-28",employee:"",batch:"",picklist:"",group:"",salesman:"",status:"",applied:false,deviceApplied:false,search:"",userSearch:"",view:"device",groupPage:1,groupStatus:"",groupSubmission:"",userId:"ps"},hc:[1,1,1,0,0,0,0]};
 const P=()=>ASG.find(a=>a.k===S.who),allowedWh=()=>P().wh==="*"?WHS:P().wh;
 const assignmentPermissions=assignment=>assignment.role==="Head"?ROLE_PAGE_ACCESS["All|—|Head"]||ROLE_PAGE_ACCESS[roleAccessKey(assignment)]||assignment.g:assignment.g==="*"?"*":ROLE_PAGE_ACCESS[roleAccessKey(assignment)]||assignment.g;
 const hasG=(id,l)=>{const permissions=assignmentPermissions(P());return permissions==="*"||(permissions[id]||"").includes(l)};
@@ -1570,6 +1597,15 @@ return records;
 })();
 const outboundPicklistCheckSample=PICKLISTS.find(row=>row.scan==="SCANNED-ERROR");
 if(outboundPicklistCheckSample)Object.assign(outboundPicklistCheckSample,{picklistId:OUTBOUND_PICKLIST_CHECK.picklistId,picklistNumber:OUTBOUND_PICKLIST_CHECK.picklistNumber,groupPicklistNumber:OUTBOUND_PICKLIST_CHECK.groupPicklistNumber,picklistDate:"2026-09-19T00:00:00.000+00:00",picklistTime:OUTBOUND_PICKLIST_CHECK.picklistTime,relatedInvoices:OUTBOUND_PICKLIST_CHECK.relatedInvoices,salesmanCode:OUTBOUND_PICKLIST_CHECK.salesmanCode,floor:"1",godownLocation:OUTBOUND_PICKLIST_CHECK.relatedValue,godown:OUTBOUND_PICKLIST_CHECK.relatedValue,startTime:"2026-09-19T11:07:47.785+00:00",endTime:"2026-09-19T11:07:47.798+00:00",remarks:"QTYMISMATCH",apiStatus:null,deviceId:"palepu-dev0048",scannedBy:"277",checkerId:null,checkerName:null,status:"CHECKED",scan:"SCANNED-ERROR",completed:false});
+const PICKLIST_ASSIGNMENT_ROWS=PICKLISTS.slice(0,40);
+[[1,"ps"],[4,"cs"],[7,"ps"],[12,"cs"]].forEach(([index,userKey])=>{
+const row=PICKLIST_ASSIGNMENT_ROWS[index],checker=ASG.find(user=>user.k===userKey);
+if(row&&checker){row.status="ASSIGNED";row.checkerId=checker.userId;row.checkerName=checker.name;row.assignedAt="2026-10-05T03:45:00.000Z"}
+});
+[[20,"ps"],[21,"cs"],[22,"ps"]].forEach(([index,userKey])=>{
+const row=PICKLIST_ASSIGNMENT_ROWS[index],checker=ASG.find(user=>user.k===userKey);
+if(row&&checker){row.checkerId=checker.userId;row.checkerName=checker.name;row.assignedAt="2026-10-05T03:45:00.000Z"}
+});
 const PICKLIST_API_FIELDS=["createdOn","modifiedOn","createdBy","modifiedBy","versionNo","tenantId","picklistId","picklistNumber","groupPicklistNumber","picklistDate","godownLocation","salesmanCode","picklistTime","manufacturerId","stockistId","deliveryType","packagingCasesCount","packagingBoxCount","packagingBagCount","packagingIcePackCount","totalQuantity","totalItems","totalBills","grossAmount","totalTax","totalAmount","relatedInvoices","locationId","status","scan","remarks","completed","startTime","endTime","scannedBy","deviceId","floor","apiStatus","checkerId","checkerName"];
 const TRAY_API_FIELDS=["createdOn","modifiedOn","createdBy","modifiedBy","versionNo","tenantId","id","trayId","trayName","status"];
 const TRAY_UPLOAD_FIELDS=["trayId","trayName","status"];
@@ -1634,20 +1670,20 @@ pages["md-tray"].rows.forEach((row,index)=>Object.assign(row,{apiId:314647-index
 L("md-checker","core","Checker Master","People who verify picked orders.",["Checker","Shift","Checks today"],["Arjun Rao|Day|14|WH-01|—|Active|","Taylor Brooks|Day|11|WH-01|—|Active|","Nia Okafor|Day|9|WH-01|—|Active|"],[["Deactivate","d","Inactive","Active"],["Reactivate","d","Active","Inactive"]],{newSt:"Active"});
 pages["md-checker"].rows.forEach((row,index)=>row.checkerSource=index===0?"Manual":"ERP");
 L("admin-users","admin","Users","Super Admins can create all roles; Heads create Managers in their department; Managers create Staff in their assigned sub-department.",["User ID","User","Department","Sub-department","Role"],
-ASG.map(a=>`${a.userId}|${a.name}|${a.dept}|${a.sub}|${a.role}|${a.wh==="*"?(WHS[0]||"WH-01"):a.wh[0]||WHS[0]||"WH-01"}|—|${a.status||"Active"}|`),[["Deactivate","d","Inactive","Active"],["Reactivate","d","Active","Inactive"],["Reset password","e","","Active"]],{newSt:"Active"});
+ASG.map(a=>`${a.userId}|${a.name}|${a.dept}|${a.sub}|${a.role}|${a.wh==="*"?(WHS[0]||"WH-01"):a.wh[0]||WHS[0]||"WH-01"}|—|${a.status||"Active"}|`),[["Deactivate","d","Inactive","Active"],["Reactivate","d","Active","Inactive"]],{newSt:"Active"});
 pages["admin-users"].rows.forEach((r,i)=>r.id=ASG[i].name);
-const CUST={dashboard:["Dashboard","Your queue, stock health and exceptions.","v","core"],"admin-depts":["Departments","Departments and sub-departments. Each department is a module.","vce","admin"],"admin-perms":["Roles & permissions","Choose which pages are visible for each assignment. Backend authorization is future scope.","vce","admin"],"admin-modules":["Modules","Licensed, installed and enabled are three separate states.","ve","admin"],"admin-settings":["Settings","Site, integrations, notifications and security.","ve","admin"],"reports":["Reports","Review picklist, invoice, device, and checker reporting.","v","core"],"day-end":["Day End","Review warehouse day sessions, start and end times, tray counts, and status.","v","core"],audit:["Audit log","Who changed what, when. Failures are highlighted.","vx","core"],syslog:["System log","Errors and failed operations with diagnostic detail.","v","core"],health:["Health & releases","Services, release manifest and site acceptance checks.","v","core"],"outbound-check-lookup":["Checker lookup","Browse Single Invoice assignments, check state and completion status.","va","outbound"],"outbound-submission":["Submission","Review completed trays, modifications, and submission details.","va","outbound"]};
+const CUST={dashboard:["Dashboard","Your queue, stock health and exceptions.","v","core"],"admin-depts":["Departments","Departments and sub-departments. Each department is a module.","vce","admin"],"admin-perms":["Roles & permissions","Choose which pages are visible for each assignment. Backend authorization is future scope.","vce","admin"],"admin-modules":["Modules","Licensed, installed and enabled are three separate states.","ve","admin"],"admin-settings":["Settings","Site, integrations, notifications and security.","ve","admin"],"reports":["Reports","Review picklist, invoice, device, and checker reporting.","v","core"],"day-end":["Day End","Review warehouse day sessions, start and end times, tray counts, and status.","v","core"],audit:["Audit log","Who changed what, when. Failures are highlighted.","vx","core"],syslog:["System log","Errors and failed operations with diagnostic detail.","v","core"],health:["Health & releases","Services, release manifest and site acceptance checks.","v","core"],"outbound-check-lookup":["Checker lookup","Browse Single Invoice assignments, check state and completion status.","va","outbound"],"outbound-picklist-assignment":["Picklist Assignment","Assign available picklists to outbound checkers and review current assignments.","va","outbound"],"outbound-submission":["Submission","Review completed trays, modifications, and submission details.","va","outbound"]};
 const NAV_ICON={
  dashboard:"grid","inbound-grn":"package","inbound-disc":"clipboard","inventory-stock":"box","inventory-ledger":"clipboard","inventory-putaway":"package","inventory-transfer":"arrow","inventory-count":"check",
- "outbound-orders":"cart","outbound-pick":"clipboard","outbound-check":"shield","outbound-check-lookup":"search","outbound-submission":"check","returns-cases":"truck","returns-inspect":"eye","returns-disp":"check","reports":"chart",
+ "outbound-orders":"cart","outbound-pick":"clipboard","outbound-check":"shield","outbound-check-lookup":"search","outbound-picklist-assignment":"users","outbound-submission":"check","returns-cases":"truck","returns-inspect":"eye","returns-disp":"check","reports":"chart",
  "md-product":"box","md-manufacturer":"building","md-device":"scan","md-batch":"package","md-wh":"location","md-tray":"layers","md-checker":"users","admin-users":"users","admin-depts":"building","admin-perms":"shield","admin-modules":"layers","admin-settings":"sliders","day-end":"clock",audit:"clipboard",syslog:"file",health:"chart"
 };
 const PH_ICON={dashboard:"grid","admin-depts":"building","admin-perms":"shield","admin-modules":"layers","admin-settings":"sliders","reports":"chart","day-end":"clock",audit:"clipboard",syslog:"file",health:"chart"};
 const actionIcon=label=>/delete|deactivate|quarantine|block/i.test(label)?"shield":/approve|confirm|resolve|release|post|save|pass|complete|reactivate/i.test(label)?"check":/export|download/i.test(label)?"download":/assign|reassign|user/i.test(label)?"users":/reset|retry/i.test(label)?"refresh":/inspect|view|open/i.test(label)?"eye":/edit|start|record|new|create|update/i.test(label)?"edit":"arrow";
-const DEPT_NAV=[{id:"inbound",name:"Inbound",icon:"download",pages:["inbound-grn","inbound-disc"]},{id:"inventory",name:"Inventory",icon:"box",pages:["inventory-stock","inventory-ledger","inventory-putaway","inventory-transfer","inventory-count"]},{id:"outbound",name:"Outbound",icon:"cart",pages:["outbound-pick","outbound-orders","outbound-check","outbound-check-lookup","outbound-submission"]},{id:"returns",name:"Returns",icon:"truck",pages:["returns-cases","returns-inspect","returns-disp"]},{id:"master-data",name:"Master data",icon:"layers",pages:["md-product","md-batch","md-device","md-checker","md-manufacturer","md-tray"]},{id:"administration",name:"Administration",icon:"shield",pages:["admin-users","admin-depts","admin-perms","admin-modules"]},{id:"monitoring",name:"Monitoring",icon:"chart",pages:["day-end","audit","syslog","health"]}];
+const DEPT_NAV=[{id:"inbound",name:"Inbound",icon:"download",pages:["inbound-grn","inbound-disc"]},{id:"inventory",name:"Inventory",icon:"box",pages:["inventory-stock","inventory-ledger","inventory-putaway","inventory-transfer","inventory-count"]},{id:"outbound",name:"Outbound",icon:"cart",pages:["outbound-pick","outbound-orders","outbound-picklist-assignment","outbound-check","outbound-check-lookup","outbound-submission"]},{id:"returns",name:"Returns",icon:"truck",pages:["returns-cases","returns-inspect","returns-disp"]},{id:"master-data",name:"Master data",icon:"layers",pages:["md-product","md-batch","md-device","md-checker","md-manufacturer","md-tray"]},{id:"administration",name:"Administration",icon:"shield",pages:["admin-users","admin-depts","admin-perms","admin-modules"]},{id:"monitoring",name:"Monitoring",icon:"chart",pages:["day-end","audit","syslog","health"]}];
 const NAV_SUBDEPT_IDS=new Set(["inbound","inventory","outbound","returns"]);
 const PAGE_TAB_GROUPS=DEPT_NAV.filter(department=>!NAV_SUBDEPT_IDS.has(department.id)).map(department=>({id:department.id,name:department.name,pages:department.pages}));
-const T=id=>id==="report-home"?"Home":id==="report-picklists"?pluralTerm(ft("groupPicklist")):id==="report-users"?"Checkers Report":id==="report-device"?"Device Reports":id==="report-stations"?"Station Report":id==="admin-users"?termLabel("users"):id==="admin-depts"?termLabel("departments"):id==="admin-perms"?`${termLabel("role")}s & permissions`:id==="md-checker"?"Checker Master":id==="outbound-check-lookup"?`${termLabel("checker")} lookup`:id==="outbound-submission"?"Submission":id==="outbound-orders"?ft("groupPicklist"):id==="outbound-pick"?ft("picklist"):pages[id]?pages[id].title:CUST[id][0],MOD=id=>pages[id]?pages[id].mod:CUST[id][3];
+const T=id=>id==="report-home"?"Home":id==="report-picklists"?pluralTerm(ft("groupPicklist")):id==="report-users"?"Checkers Report":id==="report-device"?"Device Reports":id==="report-stations"?"Station Report":id==="admin-users"?termLabel("users"):id==="admin-depts"?termLabel("departments"):id==="admin-perms"?`${termLabel("role")}s & permissions`:id==="md-checker"?"Checker Master":id==="outbound-check-lookup"?`${termLabel("checker")} lookup`:id==="outbound-picklist-assignment"?"Picklist Assignment":id==="outbound-submission"?"Submission":id==="outbound-orders"?ft("groupPicklist"):id==="outbound-pick"?ft("picklist"):pages[id]?pages[id].title:CUST[id][0],MOD=id=>pages[id]?pages[id].mod:CUST[id][3];
 const modOn=m=>!MODS[m]||(MODS[m].ent&&MODS[m].en);
 const canReportPage=id=>{const user=P(),permissions=user.role==="Super Admin"?ROLE_PAGE_ACCESS["All|—|Super Admin"]||{}:assignmentPermissions(user);return(permissions==="*"||(permissions[id]||"").includes("v"))&&modOn("core")};
 const can=id=>{
@@ -2379,6 +2415,27 @@ const checkerStatusLabel=status=>({"awaiting-approval":"Awaiting Approval",assig
 const checkerStatusTone=status=>status==="awaiting-approval"?"warning":status==="completed"?"success":status==="assigned"?"info":"neutral";
 const submissionStatusLabel=status=>({pending:"Awaiting approval",queued:"Queued",processing:"Processing",submitted:"Submitted",error:"Error"}[status]||"Not submitted");
 const submissionStatusTone=status=>({pending:"warning",queued:"info",processing:"info",submitted:"success",error:"danger"}[status]||"neutral");
+function picklistAssignmentPage(){
+const state=S.picklistAssignment,checkerUsers=ASG.filter(user=>user.status==="Active"&&user.role==="Staff"&&user.dept==="Outbound"&&(["Super Admin","Head"].includes(P().role)||P().role!=="Manager"||P().sub==="All"||user.sub===P().sub));
+if(!checkerUsers.some(user=>user.userId===state.checkerId))state.checkerId="";
+const dateRows=PICKLIST_ASSIGNMENT_ROWS.filter(row=>!state.date||row.picklistDate?.slice(0,10)===state.date);
+const isAvailable=row=>row.scan==="NEW"&&!row.checkerId,isAssigned=row=>row.scan==="NEW"&&Boolean(row.checkerId);
+const counts={all:dateRows.length,available:dateRows.filter(isAvailable).length,assigned:dateRows.filter(isAssigned).length,inProgress:dateRows.filter(row=>row.scan==="IN-PROGRESS").length,completed:dateRows.filter(row=>["SCANNED","SCANNED-ERROR"].includes(row.scan)).length};
+const query=state.query.trim().toLowerCase(),filtered=dateRows.filter(row=>{
+const matchesFilter=state.filter==="all"||state.filter==="available"&&isAvailable(row)||state.filter==="assigned"&&isAssigned(row)||state.filter==="in-progress"&&row.scan==="IN-PROGRESS"||state.filter==="completed"&&["SCANNED","SCANNED-ERROR"].includes(row.scan);
+return matchesFilter&&(!query||[row.groupPicklistNumber,row.picklistNumber,row.relatedInvoices,row.salesmanCode,row.checkerName,row.godownLocation,row.floor].filter(Boolean).join(" ").toLowerCase().includes(query));
+});
+const pageSize=10,pageCount=Math.max(1,Math.ceil(filtered.length/pageSize));state.page=Math.min(state.page,pageCount);
+const offset=(state.page-1)*pageSize,rows=filtered.slice(offset,offset+pageSize),canAssign=can("outbound-picklist-assignment")&&hasG("outbound-picklist-assignment","a");
+const filters=[["all","All"],["available","Available"],["assigned","Assigned"],["in-progress","In progress"],["completed","Completed"]];
+const checkerOptions=checkerUsers.map(user=>`<option value="${esc(user.userId)}" ${state.checkerId===user.userId?"selected":""}>${esc(user.name)} · ${esc(subdepartmentLabel(user.dept,user.sub))}</option>`).join("");
+return`${ph("outbound-picklist-assignment","",!pageHasUtilityToolbar("outbound-picklist-assignment"))}<div class="banner">Choose an active outbound checker, then assign or reassign a picklist. This standalone mockup updates sample data for this browser session; it does not call the live API.</div>
+<div class="invoice-overview picklist-assignment-overview"><h2>Assignment overview</h2>${[["Picklists",counts.all,"layers"],["Available",counts.available,"clipboard"],["Assigned",counts.assigned,"users"],["In progress",counts.inProgress,"clock"],["Completed",counts.completed,"check"]].map(([label,value,ico])=>`<div class="invoice-stat"><div><small>${esc(label)}</small><b>${Number(value).toLocaleString("en-US")}</b></div><span class="metric-icon">${icon(ico,19)}</span></div>`).join("")}</div>
+<section class="card"><div class="invoice-toolbar outbound-toolbar"><div class="invoice-tabs" role="group" aria-label="Filter picklist assignments">${filters.map(([key,label])=>`<button type="button" class="btn ${state.filter===key?"on":""}" data-a="picklist-assignment-filter" data-v="${key}" aria-pressed="${state.filter===key}">${label} · ${counts[key==="in-progress"?"inProgress":key]??0}</button>`).join("")}</div>
+<div class="invoice-toolbar-group"><label class="field"><span>Assign to</span><select class="ctl" id="picklistAssignmentChecker" ${checkerUsers.length?"":"disabled"}><option value="">Select checker</option>${checkerOptions}</select></label><label class="field"><span>Picklist date</span><input class="ctl" type="date" id="picklistAssignmentDate" value="${esc(state.date)}"></label><label class="invoice-search">${icon("search",15)}<input class="ctl" id="picklistAssignmentSearch" placeholder="Search picklist, group, invoice…" value="${esc(state.query)}" aria-label="Search picklist assignments"></label></div></div>
+${rows.length?`<div class="outbound-table-wrap" role="region" aria-label="Picklist assignments table" tabindex="0"><table class="outbound-table"><thead><tr><th>Group picklist</th><th>Picklist</th><th>Floor / Godown</th><th>Salesman</th><th>Invoice</th><th>Assigned checker</th><th>Status</th><th>Assignment</th></tr></thead><tbody>${rows.map(row=>{const assigned=row.checkerName||"—",status=row.scan==="IN-PROGRESS"?"In progress":row.scan==="SCANNED"?"Completed":row.scan==="SCANNED-ERROR"?"Needs review":row.checkerId?"Assigned":"Available",actionable=row.scan==="NEW",sameChecker=row.checkerId===state.checkerId;return`<tr><td class="id">${esc(row.groupPicklistNumber)}</td><td>${esc(row.picklistNumber)}</td><td>${esc(row.floor)} / ${esc(row.godownLocation)}</td><td>${esc(row.salesmanCode)}</td><td>${esc(row.relatedInvoices)}</td><td>${esc(assigned)}</td><td>${chip(status)}</td><td>${canAssign&&actionable?`<button type="button" class="btn ${row.checkerId?"":"p"}" data-a="picklist-assignment-assign" data-id="${esc(row.groupPicklistNumber)}" ${!state.checkerId||sameChecker?"disabled":""}>${sameChecker?"Assigned":row.checkerId?"Reassign":"Assign"}</button>`:"—"}</td></tr>`}).join("")}</tbody></table></div>`:`<div class="empty"><b>No matching picklists</b>Try another date or adjust the search and status filter.</div>`}
+<div class="invoice-pagination"><span style="color:var(--muted-foreground);font-size:12px">Showing ${filtered.length?offset+1:0}–${Math.min(offset+pageSize,filtered.length)} of ${filtered.length}</span><div><button class="btn" data-a="picklist-assignment-page" data-page="${state.page-1}" ${state.page<=1?"disabled":""}>« Previous</button><button class="btn p" aria-current="page" disabled>${state.page}</button><button class="btn" data-a="picklist-assignment-page" data-page="${state.page+1}" ${state.page>=pageCount?"disabled":""}>Next »</button></div></div></section>`;
+}
 function checkerLookupPage(){
 const state=S.checkerLookup;
 const query=state.query.trim().toLowerCase(),all=ORDER_INVOICES.filter(row=>row.vdt===state.date),statuses=["invoiced","assigned","awaiting-approval","completed"];
@@ -2400,7 +2457,7 @@ if(key==="checkerComplete")return`<td>${canMarkComplete(row)?`<button type="butt
 return`<td><button type="button" class="btn s" data-a="checker-lookup-view" data-id="${esc(row.id)}">${icon("eye",13)} View</button></td>`;
 };
 return`${ph("outbound-check-lookup","",!pageHasUtilityToolbar("outbound-check-lookup"))}<div class="invoice-overview"><h2>${esc(termLabel("checker"))} lookup</h2>${[["Assigned",counts.assigned,"users"],["Awaiting Approval",counts["awaiting-approval"],"clock"],["Invoiced",counts.invoiced,"file"],["Completed",counts.completed,"check"]].map(([label,value,ico])=>`<div class="invoice-stat"><div><small>${esc(label)}</small><b>${value}</b></div><span class="metric-icon">${icon(ico,19)}</span></div>`).join("")}</div>
-<section class="card"><div class="tb"><div><label class="field" style="margin:0;min-width:150px"><span style="font-size:11px">Business date</span><input class="ctl" type="date" data-a="checker-lookup-date" value="${esc(state.date)}"></label><label class="invoice-search">${icon("search",15)}<input id="checkerLookupSearch" class="ctl" placeholder="Search anything shown in the table…" value="${esc(state.query)}" aria-label="Search checker lookup"></label></div><div><select class="ctl" style="width:auto;min-width:160px" data-a="checker-lookup-status" aria-label="Filter by status"><option value="all" ${state.status==="all"?"selected":""}>All Statuses</option>${statuses.map(status=>`<option value="${status}" ${state.status===status?"selected":""}>${checkerStatusLabel(status)}</option>`).join("")}</select><select class="ctl" style="width:auto;min-width:160px" data-a="checker-lookup-checker" aria-label="Filter by ${esc(termLabel("checker"))}"><option value="all">All ${esc(pluralTerm(termLabel("checker")))}</option>${checkers.map(name=>`<option value="${esc(name)}" ${state.checker===name?"selected":""}>${esc(name)}</option>`).join("")}</select><button class="btn" type="button" data-a="checker-lookup-refresh">${icon("refresh",14)} Refresh</button></div></div>
+<section class="card"><div class="tb checker-lookup-toolbar"><div class="checker-lookup-filters"><label class="field checker-lookup-date" style="margin:0"><span style="font-size:11px">Business date</span><input class="ctl" type="date" data-a="checker-lookup-date" value="${esc(state.date)}"></label><label class="invoice-search checker-lookup-search">${icon("search",15)}<input id="checkerLookupSearch" class="ctl" placeholder="Search anything shown in the table…" value="${esc(state.query)}" aria-label="Search checker lookup"></label></div><div class="checker-lookup-actions"><select class="ctl" style="width:auto;min-width:160px" data-a="checker-lookup-status" aria-label="Filter by status"><option value="all" ${state.status==="all"?"selected":""}>All Statuses</option>${statuses.map(status=>`<option value="${status}" ${state.status===status?"selected":""}>${checkerStatusLabel(status)}</option>`).join("")}</select><select class="ctl" style="width:auto;min-width:160px" data-a="checker-lookup-checker" aria-label="Filter by ${esc(termLabel("checker"))}"><option value="all">All ${esc(pluralTerm(termLabel("checker")))}</option>${checkers.map(name=>`<option value="${esc(name)}" ${state.checker===name?"selected":""}>${esc(name)}</option>`).join("")}</select><button class="btn" type="button" data-a="checker-lookup-refresh">${icon("refresh",14)} Refresh</button></div></div>
 ${rows.length?`<div class="tw"><table><thead><tr>${columns.map(key=>`<th scope="col" data-column-key="${key}">${esc(key==="groupPicklistNumber"?ft("groupPicklist"):key==="picklistNumber"?ft("picklist"):key==="action"?"Actions":outboundColumn(key)?.label||key)}${["groupPicklistNumber","picklistNumber"].includes(key)?" #":""}</th>`).join("")}</tr></thead><tbody>${rows.map(row=>`<tr>${columns.map(key=>cell(row,key)).join("")}</tr>`).join("")}</tbody></table></div>`:`<div class="empty"><b>No checker records found</b>Try another date or clear the search and filters.</div>`}
 <div class="invoice-pagination"><span style="color:var(--muted-foreground);font-size:12px">Showing ${filtered.length?offset+1:0}–${Math.min(offset+pageSize,filtered.length)} of ${filtered.length}</span><div><button class="btn" data-a="checker-lookup-page" data-page="${state.page-1}" ${state.page<=1?"disabled":""}>« Previous</button><button class="btn p" aria-current="page" disabled>${state.page}</button><button class="btn" data-a="checker-lookup-page" data-page="${state.page+1}" ${state.page>=pageCount?"disabled":""}>Next »</button></div></div></section>`
 }
@@ -3060,7 +3117,7 @@ function nav(){
 }
 function show(id,keep){if(outboundCheckRow){outboundCheckRow=null;outboundCheckRecord=OUTBOUND_CHECK_RECORD;outboundCheckOrigin="outbound-orders";$("#c").classList.remove("outbound-check-full-page")}if(!keep){S.q="";S.f="";S.lg={q:"",mod:"",lvl:"",fail:0}}if(id==="reports"&&!can(reportPermissionId(S.reports.mode))){const fallback=REPORT_PERMISSION_PAGES.find(([pageId])=>can(pageId));if(fallback)S.reports.mode=fallback[1]}S.page=id;nav();const p=P();let h;
 if(!can(id)){const off=hasG(id,"v")&&!modOn(MOD(id));h=`${ph(id)}<section class="card"><div class="empty e"><b>${off?"This module is turned off":"403 · No access to this page"}</b>${off?"Ask a Super Admin to enable it in Modules.":`Your assignment (${esc(departmentLabel(p.dept))} · ${esc(p.sub==="—"?"—":subdepartmentLabel(p.dept,p.sub))} · ${esc(roleLabel(p.role))}) doesn’t include “${esc(T(id))}”. This route is hidden in the mockup; backend authorization is future scope.`}<div style="margin-top:14px"><button class="btn p" data-a="go" data-v="${home()}">Go to my workspace</button></div></div></section>`}
-else h=id==="outbound-check-lookup"?checkerLookupPage():id==="outbound-submission"?submissionPage():pages[id]?(id==="md-tray"?trayMasterPage():id==="md-device"?deviceMasterPage():id==="md-batch"?batchMasterPage():id==="outbound-orders"?orderInvoicePage():id==="outbound-pick"?pickingPage():listPage(id)):id==="dashboard"?dashboard():id==="admin-depts"?deptPage():id==="admin-perms"?permPage():id==="admin-modules"?modPage():id==="admin-settings"?setPage():id==="reports"?reportsPage():id==="day-end"?dayEndPage():id==="audit"?logsPage("audit"):id==="syslog"?logsPage("syslog"):hp();
+else h=id==="outbound-check-lookup"?checkerLookupPage():id==="outbound-picklist-assignment"?picklistAssignmentPage():id==="outbound-submission"?submissionPage():pages[id]?(id==="md-tray"?trayMasterPage():id==="md-device"?deviceMasterPage():id==="md-batch"?batchMasterPage():id==="outbound-orders"?orderInvoicePage():id==="outbound-pick"?pickingPage():listPage(id)):id==="dashboard"?dashboard():id==="admin-depts"?deptPage():id==="admin-perms"?permPage():id==="admin-modules"?modPage():id==="admin-settings"?setPage():id==="reports"?reportsPage():id==="day-end"?dayEndPage():id==="audit"?logsPage("audit"):id==="syslog"?logsPage("syslog"):hp();
 const tabGroup=PAGE_TAB_GROUPS.find(group=>group.pages.includes(id)),tabs=tabGroup?`<nav class="dept-tabs" role="tablist" aria-label="${esc(departmentLabel(tabGroup.name))} pages">${tabGroup.pages.filter(can).map(pageId=>`<button type="button" role="tab" aria-selected="${pageId===id}" class="${pageId===id?"on":""}" data-a="go" data-v="${pageId}">${esc(T(pageId))}</button>`).join("")}</nav>`:"";
 $("#c").innerHTML=(p.role==="Super Admin"?"":`<div class="banner">Viewing as <b>${esc(p.name)}</b> · ${esc(roleLabel(p.role))} · ${p.dept==="All"?"All departments":esc(departmentLabel(p.dept))+" → "+esc(p.sub==="—"?"—":subdepartmentLabel(p.dept,p.sub))}. Menu, records and actions follow this assignment.</div>`)+(id==="outbound-submission"?"":pageUtilityToolbar(id))+tabs+h;if(id==="reports")enhanceReportPicklistTerms();if(!outboundPickerOpen)window.scrollTo(0,0);$("#app").classList.remove("o");$("#mn").setAttribute("aria-expanded","false");syncOutboundColumnPortal();enhanceA11y()}
 function enhanceReportPicklistTerms(){
@@ -3131,11 +3188,12 @@ if(!passwordInput.value){showLoginError(passwordInput,passwordError,"Enter your 
 if(passwordInput.value!==DEMO_PASSWORD){showLoginError(passwordInput,passwordError,"Wrong password. Check it and try again.");return}
 loginPending=true;const submit=$("#loginSubmit");submit.disabled=true;submit.innerHTML='<span class="login-spinner" aria-hidden="true"></span><span>Signing in…</span>';$("#loginStatus").textContent="Signing in…";$("#loginStatus").classList.remove("hidden");
 window.setTimeout(()=>{$("#loginStatus").textContent=`Welcome back, ${account.name}.`;window.setTimeout(()=>{$("#login").classList.add("hidden");$("#app").classList.remove("hidden");AUTH=account;setWho(account.k);syncViewSwitcher();show(S.who==="sa"?"dashboard":home());loginPending=false;submit.disabled=false;submit.textContent="Sign in";$("#loginStatus").classList.add("hidden")},600)},120)};
-const signOut=()=>{AUTH=null;S.who="sa";outboundPickerOpen=false;outboundRelatedOpen="";masterColumnDialogOpen=false;outboundCheckRow=null;$("#m").innerHTML="";$("#toast").innerHTML="";$("#c").innerHTML="";$("#c").classList.remove("outbound-check-full-page");$("#nav").innerHTML="";document.getElementById("outboundColumnsOverlay")?.remove();document.body.style.overflow="";$("#app").classList.remove("o","sidebar-collapsed");$("#app").classList.add("hidden");$("#login").classList.remove("hidden");setProfileViewOpen(false);syncViewSwitcher()};
+const signOut=()=>{AUTH=null;S.who="sa";outboundPickerOpen=false;outboundRelatedOpen="";masterColumnDialogOpen=false;outboundCheckRow=null;$("#m").innerHTML="";$("#toast").innerHTML="";$("#c").innerHTML="";$("#c").classList.remove("outbound-check-full-page");$("#nav").innerHTML="";document.getElementById("outboundColumnsOverlay")?.remove();document.body.style.overflow="";$("#app").classList.remove("o");syncResponsiveSidebar();$("#app").classList.add("hidden");$("#login").classList.remove("hidden");setProfileViewOpen(false);syncViewSwitcher()};
 $("#out").onclick=signOut;const setNavOpen=open=>{$("#app").classList.toggle("o",open);$("#mn").setAttribute("aria-expanded",String(open));$("#mn").setAttribute("aria-label",open?"Close navigation":"Open navigation")};
 $("#mn").onclick=()=>setNavOpen(!$("#app").classList.contains("o"));
-const sidebarToggle=$("#sidebarToggle"),setSidebarCollapsed=collapsed=>{$("#app").classList.toggle("sidebar-collapsed",collapsed);sidebarToggle.innerHTML=icon(collapsed?"triangle-right":"triangle-left",12);sidebarToggle.setAttribute("aria-expanded",String(!collapsed));sidebarToggle.setAttribute("aria-label",collapsed?"Expand sidebar":"Collapse sidebar");sidebarToggle.title=collapsed?"Expand sidebar":"Collapse sidebar"};
-setSidebarCollapsed(false);
+const sidebarToggle=$("#sidebarToggle"),setSidebarCollapsed=collapsed=>{$("#app").classList.toggle("sidebar-collapsed",collapsed);sidebarToggle.innerHTML=icon(collapsed?"triangle-right":"triangle-left",12);sidebarToggle.setAttribute("aria-expanded",String(!collapsed));sidebarToggle.setAttribute("aria-label",collapsed?"Expand sidebar":"Collapse sidebar");sidebarToggle.title=collapsed?"Expand sidebar":"Collapse sidebar"},tabletSidebar=window.matchMedia("(min-width: 768px) and (max-width: 1024px)"),syncResponsiveSidebar=()=>{$("#app").classList.remove("o");setSidebarCollapsed(tabletSidebar.matches)};
+syncResponsiveSidebar();
+tabletSidebar.addEventListener("change",syncResponsiveSidebar);
 sidebarToggle.onclick=()=>setSidebarCollapsed(!$("#app").classList.contains("sidebar-collapsed"));
 document.addEventListener("click",e=>{if(e.target===$("#app")&&$("#app").classList.contains("o"))setNavOpen(false)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("#app").classList.contains("o")){setNavOpen(false);$("#mn").focus()}});
@@ -3147,6 +3205,7 @@ const ACTION_RULES={
 "manufacturer-download":()=>masterCan("md-manufacturer","x"),"manufacturer-format":()=>masterCan("md-manufacturer","c"),"manufacturer-upload":()=>masterCan("md-manufacturer","c"),
 "batch-download":()=>masterCan("md-batch","x"),"batch-format":()=>masterCan("md-batch","c"),"batch-upload":()=>masterCan("md-batch","c"),
 "pick-download":()=>hasG("outbound-pick","x"),"pick-format":()=>hasG("outbound-pick","c"),"pick-upload":()=>hasG("outbound-pick","c"),
+"picklist-assignment-assign":()=>can("outbound-picklist-assignment")&&hasG("outbound-picklist-assignment","a"),
 "pick-barcode":()=>outboundCanStartRows(),"invoice-barcode":()=>outboundCanStartRows(),
 "download-list":()=>hasG(S.page,"x"),
 "report-export":()=>S.page==="reports"&&can(reportPermissionId(S.reports.mode)),"report-schedule":()=>S.page==="reports"&&can(reportPermissionId(S.reports.mode)),
@@ -3164,7 +3223,7 @@ else if(t==="master-columns-open"){if(P().role!=="Super Admin"||!MASTER_COLUMN_D
 else if(t==="master-columns-close"){masterColumnDialogOpen=false;show(S.page,1);$('[data-a="master-columns-open"]')?.focus()}
 else if(t==="master-columns-reset"){if(P().role!=="Super Admin"||!MASTER_COLUMN_DEFS[S.page])return;saveMasterColumns(S.page,masterCurrentRole(),MASTER_COLUMN_DEFAULTS[S.page].filter(key=>masterCurrentRole()!=="Staff"||key!=="action"));show(S.page,1);$('[data-a="master-columns-reset"]')?.focus()}
 else if(t==="device-fleet-details"){if(S.page==="reports"&&S.reports.mode==="device"&&S.reports.view==="device"&&can("report-device"))deviceFleetDetails(d.id)}
-else if(t==="go"){show(d.v);if(d.open)openRow(d.v,d.open)}else if(t==="open")openRow(S.page,d.id);else if(t==="do")doAct(d.pg,d.id,+d.i);else if(t==="new")newRow(S.page);
+else if(t==="go"){show(d.v);if(tabletSidebar.matches)setSidebarCollapsed(true);if(d.open)openRow(d.v,d.open)}else if(t==="open")openRow(S.page,d.id);else if(t==="do")doAct(d.pg,d.id,+d.i);else if(t==="new")newRow(S.page);
 else if(t==="tray-new")trayForm();else if(t==="tray-edit")trayForm(d.id);
 else if(t==="product-edit")masterRecordForm("product",d.id);
 else if(t==="manufacturer-edit")masterRecordForm("manufacturer",d.id);
@@ -3198,7 +3257,18 @@ else if(t==="pick-format"){downloadTrayCsv("picklist-format.csv",[PICKLIST_API_F
 else if(t==="pick-download"){downloadTrayCsv("picklists.csv",[PICKLIST_API_FIELDS,...PICKLISTS.map(row=>PICKLIST_API_FIELDS.map(field=>row[field]))]);toast("Picklist data downloaded.")}
 else if(t==="terms-save")saveTerminology();
 else if(t==="day-end-page"){S.dayEnd.page=+d.page;show("day-end",1)}
-else if(t==="report-mode"){if(!REPORT_PERMISSION_PAGES.some(([,mode])=>mode===d.v))return;if(!can(reportPermissionId(d.v))){toast("Your role does not have access to this report.","error");return}S.reports.mode=d.v;show("reports",1)}
+else if(t==="picklist-assignment-filter"){S.picklistAssignment.filter=d.v;S.picklistAssignment.page=1;show("outbound-picklist-assignment",1)}
+else if(t==="picklist-assignment-page"){S.picklistAssignment.page=Math.max(1,Number(d.page)||1);show("outbound-picklist-assignment",1)}
+else if(t==="picklist-assignment-assign"){
+const state=S.picklistAssignment,checker=ASG.find(user=>user.userId===state.checkerId&&user.status==="Active"&&user.role==="Staff"&&user.dept==="Outbound"&&(["Super Admin","Head"].includes(P().role)||P().role!=="Manager"||P().sub==="All"||user.sub===P().sub)),row=PICKLIST_ASSIGNMENT_ROWS.find(item=>String(item.groupPicklistNumber)===String(d.id));
+if(!can("outbound-picklist-assignment")||!hasG("outbound-picklist-assignment","a")){toast("You do not have permission to assign picklists.","error");return}
+if(!checker){toast("Select an active checker in your outbound assignment scope.","error");return}
+if(!row||row.scan!=="NEW"){toast("This picklist is no longer available for assignment.","error");return}
+PICKLISTS.filter(item=>String(item.groupPicklistNumber)===String(d.id)&&item.scan==="NEW").forEach(item=>{item.checkerId=checker.userId;item.checkerName=checker.name;item.assignedAt=new Date().toISOString();item.status="ASSIGNED"});
+aud.unshift({t:"Now",d:0,actor:P().name,action:row.checkerId?"Picklist reassigned":"Picklist assigned",rec:String(d.id),mod:"outbound",out:"Success",msg:`Picklist ${row.picklistNumber} assigned to ${checker.name}.`});
+state.page=1;show("outbound-picklist-assignment",1);toast(`Picklist ${row.picklistNumber} assigned to ${checker.name}.`);
+}
+else if(t==="report-mode"){if(!REPORT_PERMISSION_PAGES.some(([,mode])=>mode===d.v))return;if(!can(reportPermissionId(d.v))){toast("Your role does not have access to this report.","error");return}S.reports.mode=d.v;show("reports",1);if(tabletSidebar.matches)setSidebarCollapsed(true)}
 else if(t==="report-user-select"){S.reports.userId=d.id;show("reports",1)}
 else if(t==="report-group-page"){S.reports.groupPage=Math.max(1,Number(d.page)||1);show("reports",1)}
 else if(t==="report-apply"||t==="report-load"){const r=S.reports,days=(new Date(r.to+"T00:00:00Z")-new Date(r.from+"T00:00:00Z"))/86400000;if(!r.from||!r.to||days<0){toast("Choose a valid date range.");return}if(t==="report-load"&&days>3){r.deviceApplied=false;show("reports",1);toast("Device reports support a maximum date range of 3 days.");return}if(t==="report-load")r.deviceApplied=true;else r.applied=true;show("reports",1)}
@@ -3343,8 +3413,8 @@ const input=e.target,file=input.files[0];input.value="";e.stopImmediatePropagati
 const kind={pickUpload:"Picklist",trayImport:"Tray",productImport:"Product",manufacturerImport:"Manufacturer",batchImport:"Batch"}[input.id],importer={pickUpload:importPicklistCsv,trayImport:importTrayCsv,productImport:importProductCsv,manufacturerImport:importManufacturerCsv,batchImport:importBatchCsv}[input.id];
 importer(file).catch(error=>{console.warn(`Could not import ${kind} CSV.`,error);toast(`Could not import CSV: ${error instanceof Error?error.message:String(error)}`)});
 });
-document.addEventListener("input",e=>{if(e.target.id==="pickSearch"){S.picking.query=e.target.value;S.picking.page=1;scheduleSearchRefresh(e.target,"outbound-pick")}});
-document.addEventListener("change",e=>{if(e.target.id==="pickFloor"){S.picking.floor=e.target.value;S.picking.page=1;show("outbound-pick",1)}if(e.target.id==="pickStatus"){S.picking.status=e.target.value;S.picking.page=1;show("outbound-pick",1)}});
+document.addEventListener("input",e=>{if(e.target.id==="pickSearch"){S.picking.query=e.target.value;S.picking.page=1;scheduleSearchRefresh(e.target,"outbound-pick")}if(e.target.id==="picklistAssignmentSearch"){S.picklistAssignment.query=e.target.value;S.picklistAssignment.page=1;scheduleSearchRefresh(e.target,"outbound-picklist-assignment")}});
+document.addEventListener("change",e=>{if(e.target.id==="pickFloor"){S.picking.floor=e.target.value;S.picking.page=1;show("outbound-pick",1)}if(e.target.id==="pickStatus"){S.picking.status=e.target.value;S.picking.page=1;show("outbound-pick",1)}if(e.target.id==="picklistAssignmentChecker"){S.picklistAssignment.checkerId=e.target.value;show("outbound-picklist-assignment",1)}if(e.target.id==="picklistAssignmentDate"){S.picklistAssignment.date=e.target.value;S.picklistAssignment.page=1;show("outbound-picklist-assignment",1)}});
 document.addEventListener("submit",e=>{
 if(e.target.id!=="userform")return;
 e.preventDefault();
@@ -3494,5 +3564,125 @@ if(from<=0||from>=columns.length-1||to<=0||to>=columns.length-1)return;
 const [moving]=columns.splice(from,1);columns.splice(columns.indexOf(target.dataset.columnKey),0,moving);saveOutboundColumns(tab,columns,outboundColumnRole);show(outboundColumnsPage(),1);
 });
 window.setInterval(()=>{if(!$("#outboundTable")||S.page!=="outbound-orders")return;$("#outboundTable").querySelectorAll(".outbound-elapsed").forEach(element=>{const start=element.dataset.start;if(outboundSameTimeZone(start))element.textContent=formatOutboundDuration((Date.now()-outboundParseDate(start).getTime())/1000)})},60000);
+const DEMO_SITE_CODE="123456",RESET_DEFAULT_PASSWORD="user",passwordResetRequests=[];
+ASG.forEach(account=>{account.password||=DEMO_PASSWORD});
+const managerFor=account=>{
+if(account.role==="Staff")return ASG.find(candidate=>candidate.role==="Manager"&&candidate.dept===account.dept&&candidate.sub===account.sub);
+if(account.role==="Manager")return ASG.find(candidate=>candidate.role==="Head");
+if(account.role==="Head")return ASG.find(candidate=>candidate.role==="Super Admin");
+return null
+};
+const canResetUser=(actor,target)=>{
+if(!actor||!target||actor.k===target.k)return false;
+if(actor.role==="Super Admin")return true;
+if(actor.role==="Head")return["Manager","Staff"].includes(target.role);
+return actor.role==="Manager"&&target.role==="Staff"&&actor.dept===target.dept&&actor.sub===target.sub
+};
+const pendingResetRequests=()=>passwordResetRequests.filter(request=>request.status==="Pending"&&canResetUser(P(),ASG.find(account=>account.k===request.userKey)));
+const profilePage=()=>{
+const account=P(),manager=managerFor(account),roleOptions=ASG.filter(item=>item.status!=="Inactive").map(item=>`<option value="${esc(item.k)}" ${item.k===account.k?"selected":""}>${esc(item.name)} · ${esc(assignmentRoleLabel(item))} · ${esc(item.dept==="All"?"All departments":departmentLabel(item.dept))}</option>`).join("");
+return`<div class="ph"><div><h1>Profile</h1><p>Your account and site assignment</p></div><button class="btn" data-a="profile-back">Back to workspace</button></div>
+<div class="g2"><section class="card"><div class="ch"><div><h2>Account details</h2><p>Your account and site assignment</p></div></div><div class="cb"><div class="kv">
+<div><span>Name</span><b>${esc(account.name)}</b></div><div><span>User ID</span><b>${esc(account.userId)}</b></div><div><span>Email</span><b>${esc(account.email||"—")}</b></div><div><span>Role</span><b>${esc(assignmentRoleLabel(account))}</b></div><div><span>Department</span><b>${esc(account.dept==="All"?"All departments":departmentLabel(account.dept))}</b></div><div><span>Sub-department</span><b>${esc(account.sub==="—"?"—":subdepartmentLabel(account.dept,account.sub))}</b></div><div><span>Site code</span><b>${DEMO_SITE_CODE}</b></div><div><span>Reports to</span><b>${esc(manager?.name||"—")}</b></div></div>
+${account.forcePasswordChange?'<div class="banner w" style="margin-top:16px">Your password was reset. Change the temporary password before continuing.</div>':""}
+${isAuthSuperAdmin()?`<div class="field" style="margin-top:16px"><label for="profileRoleView">Demo role preview</label><select id="profileRoleView" class="ctl">${roleOptions}</select><small style="color:var(--muted-foreground)">Switch between seeded roles to preview their screens and reset permissions. This is mockup-only.</small></div>`:""}</div></section>
+<section class="card"><div class="ch"><div><h2>Change password</h2><p>Enter your current password and confirm the new one.</p></div></div><div class="cb"><form id="profilePasswordForm" novalidate>
+<div class="field"><label for="profileCurrentPassword">Current password</label><input id="profileCurrentPassword" name="currentPassword" type="password" autocomplete="current-password" required></div>
+<div class="field"><label for="profileNewPassword">New password</label><input id="profileNewPassword" name="newPassword" type="password" minlength="8" autocomplete="new-password" required></div>
+<div class="field"><label for="profileConfirmPassword">Confirm new password</label><input id="profileConfirmPassword" name="confirmPassword" type="password" minlength="8" autocomplete="new-password" required></div>
+<p id="profilePasswordError" class="login-error hidden" role="alert"></p><button class="btn p" type="submit">Update password</button></form></div></section></div>`
+};
+const renderPageBeforeProfile=show;
+let profileReturnPage="dashboard";
+show=function(id,keep){
+if(id!=="profile"){
+renderPageBeforeProfile(id,keep);
+if(AUTH){profileToggle.disabled=false;profileToggle.title="Open profile";profileToggle.setAttribute("aria-label","Open profile")}
+if(id==="admin-users")renderResetRequestPanel();
+if(AUTH&&P()?.forcePasswordChange&&id!=="profile")$("#c").insertAdjacentHTML("afterbegin",`<div class="banner w">Your password was reset. <button class="btn s" data-a="profile-open">Change it in your profile</button></div>`);
+return
+}
+S.page="profile";nav();profileToggle.disabled=false;profileToggle.title="Open profile";profileToggle.setAttribute("aria-label","Open profile");$("#c").innerHTML=profilePage()
+};
+const renderResetRequestPanel=()=>{
+if(!can("admin-users"))return;
+const requests=pendingResetRequests();
+if(!requests.length)return;
+$("#c").insertAdjacentHTML("beforeend",`<section class="card"><div class="ch"><div><h2>Password reset requests</h2><p>Requests are visible to the authorized manager, Head, or Super Admin in this demo.</p></div></div><div class="tw"><table><thead><tr><th>User</th><th>Role</th><th>Requested</th><th>Action</th></tr></thead><tbody>${requests.map(request=>{const target=ASG.find(account=>account.k===request.userKey);return`<tr><td>${esc(target?.name||"Unknown user")} · ${esc(target?.userId||"")}</td><td>${esc(target?assignmentRoleLabel(target):"—")}</td><td>${esc(request.createdAt)}</td><td><button class="btn p s" data-a="auth-reset-user" data-id="${esc(request.userKey)}">Reset to default password</button></td></tr>`}).join("")}</tbody></table></div></section>`)
+};
+const originalOpenRow=openRow;
+openRow=function(id,rid){
+originalOpenRow(id,rid);
+if(id!=="admin-users")return;
+const target=ASG.find(account=>account.k===rid||account.name===rid);
+if(!target||!canResetUser(P(),target))return;
+const body=$("#m .mbd");
+if(!body)return;
+const button=document.createElement("button");
+button.className="btn p";button.type="button";button.dataset.a="auth-reset-user";button.dataset.id=target.k;button.textContent=`Reset password to ${RESET_DEFAULT_PASSWORD}`;
+const note=document.createElement("p");note.style.cssText="margin:10px 0 0;color:var(--muted-foreground);font-size:12px";note.textContent="The user will sign in with the temporary default and then change it in Profile.";
+body.append(button,note)
+};
+profileToggle.disabled=false;
+profileToggle.title="Open profile";
+profileToggle.setAttribute("aria-label","Open profile");
+profileToggle.onclick=()=>{setProfileViewOpen(false);if(S.page!=="profile")profileReturnPage=S.page;show("profile",1)};
+const originalLoginSubmit=$("#lf").onsubmit;
+$("#lf").onsubmit=function(event){
+event.preventDefault();
+const siteCode=$("#siteCode").value,userId=$("#em").value.trim().toUpperCase().replace(/\s+/g,""),account=ASG.find(item=>item.status!=="Inactive"&&item.userId.toUpperCase()===userId),password=$("#pw"),entered=password.value;
+if(siteCode!==DEMO_SITE_CODE){clearLoginError($("#siteCode"),$("#siteCodeError"));showLoginError($("#siteCode"),$("#siteCodeError"),"Site code not recognized by this demo. Use 123456.");return}
+if(account&&entered===(account.password||DEMO_PASSWORD)&&entered!==DEMO_PASSWORD){
+password.value=DEMO_PASSWORD;
+try{return originalLoginSubmit.call(this,event)}finally{password.value=entered}
+}
+return originalLoginSubmit.call(this,event)
+};
+$("#loginHelpToggle").onclick=event=>{
+const userId=$("#em").value.trim().toUpperCase().replace(/\s+/g,""),account=ASG.find(item=>item.status!=="Inactive"&&item.userId.toUpperCase()===userId),message=$("#loginHelp");
+if(!userId){message.textContent="Enter your User ID first, then request a reset.";message.classList.remove("hidden");event.currentTarget.setAttribute("aria-expanded","true");return}
+if($("#siteCode").value!==DEMO_SITE_CODE){message.textContent="Enter the correct 6-digit site code before requesting a reset.";message.classList.remove("hidden");event.currentTarget.setAttribute("aria-expanded","true");return}
+if(!account){message.textContent="User ID not found. Contact the site administrator.";message.classList.remove("hidden");event.currentTarget.setAttribute("aria-expanded","true");return}
+const approver=managerFor(account);
+if(!approver){message.textContent="Contact the site owner to recover this Super Admin account.";message.classList.remove("hidden");event.currentTarget.setAttribute("aria-expanded","true");return}
+if(!passwordResetRequests.some(request=>request.userKey===account.k&&request.status==="Pending"))passwordResetRequests.unshift({userKey:account.k,status:"Pending",createdAt:new Date().toLocaleString()});
+message.textContent=`Reset request recorded in this mockup. Ask ${approver.name} (${assignmentRoleLabel(approver)}) to reset your password. No real notification is sent.`;
+message.classList.remove("hidden");event.currentTarget.setAttribute("aria-expanded","true")
+};
+document.addEventListener("click",event=>{
+const action=event.target.closest("[data-a]")?.dataset.a;
+if(action==="profile-open"){profileReturnPage=S.page==="profile"?profileReturnPage:S.page;show("profile",1);return}
+if(action==="profile-back"){show(profileReturnPage||home(),1);return}
+if(action==="auth-reset-user"){
+const target=ASG.find(account=>account.k===event.target.closest("[data-a]")?.dataset.id);
+if(!target||!canResetUser(P(),target)){toast("Your role cannot reset this user's password.","error");return}
+target.password=RESET_DEFAULT_PASSWORD;target.forcePasswordChange=true;
+passwordResetRequests.filter(request=>request.userKey===target.k&&request.status==="Pending").forEach(request=>{request.status="Completed";request.resolvedBy=P().userId;request.resolvedAt=new Date().toLocaleString()});
+aud.unshift({t:"Now",d:0,actor:P().name,action:"Password reset",rec:target.userId,mod:"admin",out:"Success",msg:`Password reset to the temporary default by ${P().name}.`});
+$("#m").innerHTML="";show(S.page==="admin-users"?"admin-users":home(),1);toast(`Password reset for ${target.name}. They must change it in Profile.`);return
+}
+});
+document.addEventListener("change",event=>{
+if(event.target.id!=="profileRoleView"||!isAuthSuperAdmin())return;
+setWho(event.target.value);show("profile",1);toast(`Role preview: ${assignmentRoleLabel(P())}.`)
+});
+document.addEventListener("submit",event=>{
+if(event.target.id==="userform"){
+const data=new FormData(event.target),userId=String(data.get("userId")).trim(),password=String(data.get("password")||"");
+window.setTimeout(()=>{const account=ASG.find(item=>item.userId.toLowerCase()===userId.toLowerCase());if(account&&password)account.password=password},0);
+return
+}
+if(event.target.id!=="profilePasswordForm")return;
+event.preventDefault();
+const account=P(),data=new FormData(event.target),current=String(data.get("currentPassword")),next=String(data.get("newPassword")),confirm=String(data.get("confirmPassword")),error=$("#profilePasswordError");
+error.classList.add("hidden");error.textContent="";
+if(current!==(account.password||DEMO_PASSWORD)){error.textContent="Current password is incorrect.";error.classList.remove("hidden");return}
+if(next.length<8){error.textContent="Use at least 8 characters for the new password.";error.classList.remove("hidden");return}
+if(next!==confirm){error.textContent="New password and confirmation do not match.";error.classList.remove("hidden");return}
+if(next===current){error.textContent="Choose a password different from your current password.";error.classList.remove("hidden");return}
+account.password=next;account.forcePasswordChange=false;
+aud.unshift({t:"Now",d:0,actor:account.name,action:"Password changed",rec:account.userId,mod:"admin",out:"Success",msg:"Password changed from the profile page."});
+show("profile",1);toast("Password updated for this mockup session.")
+},true);
 })();
 </script></body></html>
