@@ -1254,7 +1254,7 @@ body:has(.outbound-check-full-page) .menu{display:none}
 <div class="field"><label for="em">User ID</label><input id="em" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="WMS-0001" aria-describedby="userError" required><p class="login-error hidden" id="userError" aria-live="polite"></p></div>
 <div class="field"><label for="pw">Password</label><div class="password-input-wrap"><input id="pw" name="password" type="password" autocomplete="current-password" value="ZanderDemo123!" aria-describedby="capsLockWarning passwordError" required><button class="password-toggle" type="button" id="passwordToggle" aria-pressed="false">Show</button></div><p class="caps-lock-warning hidden" id="capsLockWarning" role="status">Caps Lock is on.</p><p class="login-error hidden" id="passwordError" aria-live="polite"></p></div>
 <div class="login-help-row"><button type="button" class="login-help-toggle" id="loginHelpToggle" aria-expanded="false" aria-controls="loginHelp">Forgot password?</button></div>
-<p class="login-help-message hidden" id="loginHelp" role="status">For a password reset or new access, contact your administrator for help with your User ID and 6-digit site code.</p><p class="login-status hidden" id="loginStatus" role="status" aria-live="polite"></p><button class="btn p login-submit" id="loginSubmit" type="submit">Sign in</button><p class="login-new-user">New user? Contact admin for your credentials.</p></form></section></main>
+<div class="login-help-message hidden" id="loginHelp" role="region" aria-label="Password recovery options"><p id="loginHelpIntro">Choose email self-service or ask an authorized manager to reset your password.</p><div class="login-help-actions"><button type="button" class="btn s" id="emailPasswordReset">Email me a reset link</button><button type="button" class="btn s" id="managerPasswordReset">Ask my manager to reset it</button></div><p class="login-status hidden" id="loginHelpStatus" role="status" aria-live="polite"></p></div><p class="login-status hidden" id="loginStatus" role="status" aria-live="polite"></p><button class="btn p login-submit" id="loginSubmit" type="submit">Sign in</button><p class="login-new-user">New user? Contact admin for your credentials.</p></form></section></main>
 <div id="app" class="shell hidden"><a class="skip-link" href="#c">Skip to content</a><aside class="sb"><div class="brand sidebar-brand">
   <img class="sidebar-icon" src="./onprem-zander-web-assets/assets/icons/Zander%20-%20Color%20Icon.png" alt="">
   <img class="sidebar-logo" src="./onprem-zander-web-assets/assets/images/Brand/zander_Logo.png" alt="Zander" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
@@ -1380,7 +1380,7 @@ const aliases={
 },sources=Object.keys(aliases).sort((a,b)=>b.length-a.length),pattern=new RegExp(`\\b(?:(an?)\\s+)?(${sources.map(source=>source.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")})\\b`,"gi");
 return value.replace(pattern,(match,article,source)=>{const replacement=aliases[sources.find(alias=>alias.toLowerCase()===source.toLowerCase())],label=source===source.toUpperCase()?replacement.toUpperCase():source[0]===source[0].toUpperCase()?replacement[0].toUpperCase()+replacement.slice(1):replacement;if(!article)return label;const next=/^[aeiou]/i.test(replacement)?"an":"a",articleLabel=article===article.toUpperCase()?next.toUpperCase():article[0]===article[0].toUpperCase()?next[0].toUpperCase()+next.slice(1):next;return`${articleLabel} ${label}`});
 };
-const refreshLoginTerms=()=>{const id=`${termLabel("user")} ID`;document.querySelector('label[for="em"]').textContent=id;$(".login-intro").replaceChildren(`Enter your 6-digit site code, ${id} and password.`);$("#loginHelp").textContent=`For a password reset or new access, contact your administrator for help with your ${id} and 6-digit site code.`};
+const refreshLoginTerms=()=>{const id=`${termLabel("user")} ID`;document.querySelector('label[for="em"]').textContent=id;$(".login-intro").replaceChildren(`Enter your 6-digit site code, ${id} and password.`);$("#loginHelpIntro").textContent=`Choose email self-service or ask an authorized manager to reset your password. Enter your ${id} and site code first.`};
 refreshLoginTerms();
 const ASG=[
 {k:"sa",name:"Jordan Davis",role:"Super Admin",dept:"All",sub:"—",wh:"*",scope:"All",status:"Active",source:"Manual",g:"*"},
@@ -3608,7 +3608,7 @@ const renderResetRequestPanel=()=>{
 if(!can("admin-users"))return;
 const requests=pendingResetRequests();
 if(!requests.length)return;
-$("#c").insertAdjacentHTML("beforeend",`<section class="card"><div class="ch"><div><h2>Password reset requests</h2><p>Requests are visible to the authorized manager, Head, or Super Admin in this demo.</p></div></div><div class="tw"><table><thead><tr><th>User</th><th>Role</th><th>Requested</th><th>Action</th></tr></thead><tbody>${requests.map(request=>{const target=ASG.find(account=>account.k===request.userKey);return`<tr><td>${esc(target?.name||"Unknown user")} · ${esc(target?.userId||"")}</td><td>${esc(target?assignmentRoleLabel(target):"—")}</td><td>${esc(request.createdAt)}</td><td><button class="btn p s" data-a="auth-reset-user" data-id="${esc(request.userKey)}">Reset to default password</button></td></tr>`}).join("")}</tbody></table></div></section>`)
+$("#c").insertAdjacentHTML("beforeend",`<section class="card"><div class="ch"><div><h2>Password reset requests</h2><p>Requests are visible to the authorized manager, Head, or Super Admin in this demo. A Head can reset a Staff account directly without waiting for the Manager.</p></div></div><div class="tw"><table><thead><tr><th>User</th><th>Role</th><th>Requested</th><th>Action</th></tr></thead><tbody>${requests.map(request=>{const target=ASG.find(account=>account.k===request.userKey);return`<tr><td>${esc(target?.name||"Unknown user")} · ${esc(target?.userId||"")}</td><td>${esc(target?assignmentRoleLabel(target):"—")}</td><td>${esc(request.createdAt)}</td><td><button class="btn p s" data-a="auth-reset-user" data-id="${esc(request.userKey)}">Reset to default password</button></td></tr>`}).join("")}</tbody></table></div></section>`)
 };
 const originalOpenRow=openRow;
 openRow=function(id,rid){
@@ -3639,16 +3639,28 @@ try{return originalLoginSubmit.call(this,event)}finally{password.value=entered}
 return originalLoginSubmit.call(this,event)
 };
 $("#loginHelpToggle").onclick=event=>{
-const userId=$("#em").value.trim().toUpperCase().replace(/\s+/g,""),account=ASG.find(item=>item.status!=="Inactive"&&item.userId.toUpperCase()===userId),message=$("#loginHelp");
-if(!userId){message.textContent="Enter your User ID first, then request a reset.";message.classList.remove("hidden");event.currentTarget.setAttribute("aria-expanded","true");return}
-if($("#siteCode").value!==DEMO_SITE_CODE){message.textContent="Enter the correct 6-digit site code before requesting a reset.";message.classList.remove("hidden");event.currentTarget.setAttribute("aria-expanded","true");return}
-if(!account){message.textContent="User ID not found. Contact the site administrator.";message.classList.remove("hidden");event.currentTarget.setAttribute("aria-expanded","true");return}
-const approver=managerFor(account);
-if(!approver){message.textContent="Contact the site owner to recover this Super Admin account.";message.classList.remove("hidden");event.currentTarget.setAttribute("aria-expanded","true");return}
-if(!passwordResetRequests.some(request=>request.userKey===account.k&&request.status==="Pending"))passwordResetRequests.unshift({userKey:account.k,status:"Pending",createdAt:new Date().toLocaleString()});
-message.textContent=`Reset request recorded in this mockup. Ask ${approver.name} (${assignmentRoleLabel(approver)}) to reset your password. No real notification is sent.`;
-message.classList.remove("hidden");event.currentTarget.setAttribute("aria-expanded","true")
+const message=$("#loginHelp"),expanded=event.currentTarget.getAttribute("aria-expanded")==="true";
+event.currentTarget.setAttribute("aria-expanded",String(!expanded));message.classList.toggle("hidden",expanded);
+$("#loginHelpStatus").classList.add("hidden");$("#loginHelpStatus").textContent=""
 };
+const handlePasswordRecovery=mode=>{
+const userId=$("#em").value.trim().toUpperCase().replace(/\s+/g,""),account=ASG.find(item=>item.status!=="Inactive"&&item.userId.toUpperCase()===userId),status=$("#loginHelpStatus");
+status.classList.remove("hidden");
+if(!userId){status.textContent="Enter your User ID first.";return}
+if($("#siteCode").value!==DEMO_SITE_CODE){status.textContent="Enter the correct 6-digit site code first.";return}
+if(!account){status.textContent="No matching demo account was found.";return}
+if(mode==="email"){
+if(!account.email){status.textContent="No email is configured for this demo account. Ask an authorized manager to reset the password.";return}
+status.textContent=`If this account has a verified email, a reset link would be sent to ${account.email}. This mockup does not send email or create a reset link.`;
+return
+}
+const approver=managerFor(account);
+if(!approver){status.textContent="Contact the site owner to recover this Super Admin account.";return}
+if(!passwordResetRequests.some(request=>request.userKey===account.k&&request.status==="Pending"))passwordResetRequests.unshift({userKey:account.k,status:"Pending",createdAt:new Date().toLocaleString()});
+status.textContent=`Reset request recorded in this mockup. Ask ${approver.name} (${assignmentRoleLabel(approver)}) to reset your password. No real notification is sent.`
+};
+$("#emailPasswordReset").onclick=()=>handlePasswordRecovery("email");
+$("#managerPasswordReset").onclick=()=>handlePasswordRecovery("manager");
 document.addEventListener("click",event=>{
 const action=event.target.closest("[data-a]")?.dataset.a;
 if(action==="profile-open"){profileReturnPage=S.page==="profile"?profileReturnPage:S.page;show("profile",1);return}
