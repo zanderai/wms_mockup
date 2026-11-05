@@ -1,541 +1,418 @@
-# WMS mockup: authentication research and demo
+# On-prem WMS: current state and target flow
 
-This is a standalone browser prototype, not an API-connected application. Open
-[`index.html`](./index.html). It uses seeded accounts and local JavaScript state;
-it does not create database rows, send email, notify a real manager, or call the
-on-prem API.
+This note researches the WMS mockup and the `onprem-zander-api` /
+`onprem-zander-web` repositories. Zander-Ops is out of scope.
 
-## What the current on-prem API does
+The target for this increment is deliberately simple: one standard release is
+installed at each client site; the web app, API, PostgreSQL, users, roles,
+configuration, and operational data run there. There is no required control
+plane, cloud database, Supabase dependency, remote agent, or central admin
+portal. An authorized Zander operator can configure that site's local app when
+onsite or through a client-approved VPN/network path. A site-local API is not
+reachable from Zander automatically.
 
-Research scope: `onprem-zander-api` and `onprem-zander-web` only. Zander-Ops is
-out of scope.
+## What exists today
 
-### Login and client-side state
+### Web/API/data flow
 
-- The Angular web app chooses a tenant from the on-prem runtime configuration
-  (`ZANDER_TENANT`); its login request is `GET /{tenantName}/login`.
-- Login sends `Authorization: Basic <base64(userId:password)>` and `channel: WEB`.
-  The API looks up the tenant in the public tenant registry, changes to its
-  PostgreSQL schema, authenticates the user, and returns a JWT and user/role
-  information.
-- The JWT contains the user as its subject and tenant schema/session claims.
-  The API filter reads the tenant claim on later requests and selects that
-  schema.
-- The web client stores `etraze_token`, `etraze_user`, `etraze_role`,
-  `etraze_sessionId`, `etraze_tenantName`, and related values in browser
-  `localStorage`. The API separately records sessions in `tbl_user_session`.
-- User, role, and credential records are database-side, not browser-side. The
-  API uses schema-based PostgreSQL multitenancy: tenant metadata is looked up
-  through the `public` schema; application records are read from the selected
-  tenant schema. The configured database may be local or AWS RDS, depending on
-  the active profile and deployment environment.
+- On-prem web runtime configuration supplies the tenant name (`ZANDER_TENANT`).
+  The Angular web app sends login to `GET /{tenantName}/login` with
+  `Authorization: Basic <base64(userId:password)>` and `channel: WEB`.
+- The API resolves the tenant via the public tenant registry, selects the
+  tenant's PostgreSQL schema, authenticates the user, and returns a JWT. Later
+  requests use the tenant/schema claim in that JWT.
+- User and operational records live in the selected PostgreSQL schema. The
+  web app stores the session/token and display data in browser localStorage;
+  that browser storage is not the database of record. The API also tracks
+  sessions in `tbl_user_session`.
+- The database URL is deployment/profile configuration. It may point to a
+  local PostgreSQL instance or a cloud-hosted database depending on deployment;
+  repository configuration does not prove where a particular production
+  customer's database is currently hosted.
+- The inspected code has `tenantCode` and `appcode`, not a six-digit
+  `siteCode` field. Tenant creation generates `appcode` as four digits. Do not
+  use either existing value as the proposed six-digit site code.
 
-### Existing authentication routes
+### Existing authentication routes and data
 
-`SecurityController` routes are at the API host root. The user/profile routes
-below inherit `/rest/api/v1` through `BaseCrudController` / `BaseRestController`.
-Protected routes require a bearer JWT unless noted otherwise.
+`SecurityController` exposes the root-level login/reset routes. User/profile
+routes below generally use the `/rest/api/v1` base path. Check Spring security
+and individual controller annotations for access requirements; most management
+routes require a bearer JWT.
 
 | Route | Current purpose |
 |---|---|
-| `POST /register` | Registration request / account onboarding. |
-| `GET /{tenantName}/login` | Web username/password login; `Authorization: Basic` plus `channel: WEB`. |
-| `GET /{tenantName}/loginMobile` | Mobile login for an app/tenant identifier. |
-| `GET /login-pin` | PIN login. |
-| `GET /{tenantName}/login-pin-mobile` | Mobile PIN login for an app/tenant identifier. |
-| `POST /set-mobile-pin` | Create or update a mobile PIN. |
-| `GET /check-mobile-pin-status/{emailId}` | Check mobile PIN status. |
-| `GET /check-user-exist/{email}` | Check whether a user exists. |
-| `PUT /signout` | Sign out / end the current session. |
-| `POST /change_password` | Legacy channel-specific password change. |
-| `POST /updatePassword` | Authenticated password change; body has `oldPassword` and `newPassword`. |
-| `POST /resetPassword?userId=…&tenantName=…` | Public reset request; creates a reset token when the account is found. |
-| `GET /validate_reset_password_token?token=…` | Check a password-reset token. |
-| `POST /savePassword?tenantName=…` | Set a password with a reset token; body has `token` and `newPassword`. |
-| `POST /{tenantName}/userConfirm` | Complete account activation and set an initial password. |
-| `GET /validate_user_actiation_token?token=…&tenantName=…` | Validate activation token (`actiation` is the current route spelling). |
-| `GET /resendRegistrationToken?token=…` | Registration-token route; current controller implementation is effectively a stub. |
-| `POST /resendActivationMail` | Resend activation message. |
-| `GET /rest/api/v1/myProfile` | Get current user's profile. |
-| `POST /rest/api/v1/updateMyProfile` | Update profile details. |
-| `POST /rest/api/v1/user` | User signup flow. |
-| `POST /rest/api/v1/user_register` | User creation flow. |
-| `GET /rest/api/v1/login/users` | Get current login user's details. |
-| `GET /rest/api/v1/users`, `/rest/api/v1/userss`, `/rest/api/v1/user-list` | User lists / paging, subject to API logic and role checks. |
+| `GET /{tenantName}/login` | Web username/password login. |
+| `GET /{tenantName}/loginMobile`, `GET /{tenantName}/login-pin-mobile` | Mobile/app login variants. |
+| `GET /login-pin`, `POST /set-mobile-pin`, `GET /check-mobile-pin-status/{emailId}` | PIN login and PIN management. |
+| `POST /register`, `POST /{tenantName}/userConfirm` | Registration / account activation flows. |
+| `GET /validate_user_actiation_token` | Activation-token validation; `actiation` is the current spelling. |
+| `POST /resetPassword?userId=…&tenantName=…` | Public forgot-password request; the user service creates a reset token when the account is found. |
+| `GET /validate_reset_password_token?token=…` | Validate a reset token. |
+| `POST /savePassword?tenantName=…` | Set a password with a token. |
+| `POST /change_password`, `POST /updatePassword` | Legacy channel-specific change and authenticated old/new-password change. |
+| `PUT /signout` | End the current session. |
+| `GET /rest/api/v1/myProfile`, `POST /rest/api/v1/updateMyProfile` | Get/update the current profile. |
+| `POST /rest/api/v1/user`, `POST /rest/api/v1/user_register` | User create/onboarding routes. |
+| `GET /rest/api/v1/login/users`, `/users`, `/userss`, `/user-list` | Current-user details and user-list variants. |
 
-Reset-token routes are permitted without a JWT in the Spring Security
-configuration; most user management and profile routes are authenticated.
-`/resetPassword` resolves the tenant and creates a token through the user
-service, which has an email-construction path. The current Angular forgot
-password flow calls this endpoint. This API has no six-digit site-code argument
-or site-code lookup in the reviewed login path.
+The Angular `changepassword()` helper targets
+`/rest/api/v1/changepassword`, while the API maps `POST /change_password`.
+Treat that legacy path as a route-contract mismatch; the separately implemented
+`POST /updatePassword` is the clearer existing change-password route.
 
-The Angular `changepassword()` helper currently targets
-`/rest/api/v1/changepassword`, while the API controller mapping is
-`POST /change_password`. Treat that as a route-contract mismatch to verify
-before relying on the legacy endpoint. The newer `POST /updatePassword` route
-is separately implemented.
+Relevant current tables in each tenant schema include:
 
-The reviewed API exposes no manager-mediated reset-request or
-reset-to-temporary-password endpoint. It has user/manager relationships and a
-token-based self-service reset, but the role escalation workflow described
-below is a target design, not existing API behavior.
-
-### Existing auth-related data model
-
-The migration `onprem-zander-api/src/main/resources/db/migration/tenancy/V1__tenancy_table.sql`
-and JPA models describe these relevant tables. Common `BaseModel` columns
-include `created_on`, `modified_on`, `created_by`, `modified_by`, `version_no`,
-and `tenant_id`.
-
-| Table | Current purpose / important fields |
+| Table | What it stores |
 |---|---|
-| `tbl_user` | Identity and assignment: `user_id` (key), first/last name, email, phone, `role_id`, `role_name`, `manager_id`, status, channels, enabled/onboarding flags, and tenant metadata. |
-| `tbl_user_auth` | Credential record keyed by `id`, with `user_id`, `email_id`, `password`, mobile `passcode`, enabled/expiry/credential-expired flags, and password expiry date. |
-| `tbl_role` | Role ID, role name, description. `role_name` is also used as the Spring Security authority, so it is not merely a presentation label today. |
-| `tbl_role_services` | Role-to-screen grants (`role_id`, `screen_id`). |
-| `tbl_screen` | Screen metadata and create/read/update/delete/view permission flags. |
-| `tbl_user_role_services` | Per-user role/screen assignments and labels. |
-| `tbl_user_manager` | User-to-manager relationship data. `tbl_user.manager_id` also represents manager linkage. |
-| `tbl_user_session` | Session ID, user ID, status, timestamps, IP/location, and user-agent information. |
-| `tbl_password_history` and `password_history_model_password_detail` | Recent password history; the service keeps up to three entries. |
-| `tbl_password_reset_token` | Reset token, expiry, and associated `UserAuth`. |
-| `tbl_verification_token` | Activation token, expiry, status, and associated `UserAuth`. |
-| `tbl_mobile_pin` | Mobile PIN/device data associated with a user/auth record. |
-| `public.tbl_tenant` model | Tenant identity, name/status, schema name, `tenantCode`, and `appcode`; it is separate from the tenant-scoped user tables. |
+| `tbl_user` | User ID, names/contact details, role ID/name, manager ID, status, channel and onboarding flags. |
+| `tbl_user_auth` | Credential/auth fields associated with a user. |
+| `tbl_role`, `tbl_role_services`, `tbl_screen`, `tbl_user_role_services` | Role, screen/permission, and user-role-service data. |
+| `tbl_user_manager` | Manager relationship data; `tbl_user.manager_id` also links a manager. |
+| `tbl_user_session` | Login sessions and status/timestamps. |
+| `tbl_password_history`, `password_history_model_password_detail` | Password history. |
+| `tbl_password_reset_token`, `tbl_verification_token` | Password-reset and account-activation tokens. |
+| `tbl_mobile_pin` | Mobile PIN/device data. |
+| `public.tbl_tenant` | Tenant registry metadata such as tenant name, schema, `tenantCode`, and `appcode`. It is not the tenant's user store. |
 
-The current API has `tenantCode` and `appcode`, not a `siteCode` column. Tenant
-creation sets `tenantCode` from the tenant-name prefix and generates `appcode`
-as a four-digit number. Do not treat either as the proposed six-digit site code.
+### Authentication issues to address before production
 
-### Important implementation caveats
+- Passwords are Base64-encoded in the user service, and Spring is configured
+  with a no-op password encoder. Base64 is reversible, not password hashing.
+  Migrate to Argon2id or BCrypt through Spring's `PasswordEncoder`.
+- Password-token expiry uses a `plusDays` calculation with a value named like
+  minutes (`60 * 24`); verify and correct the intended expiry before relying on
+  it.
+- `updatePassword` currently logs the submitted new password. Remove secrets
+  from logs.
+- The reviewed API has no dedicated `siteCode` login argument or
+  `force_password_change` field and no manager-mediated reset-request flow.
+- Existing user/role names and authority checks are not yet cleanly separated
+  into immutable machine keys and client-editable display aliases.
 
-- `UserService` Base64-encodes passwords, which is reversible encoding, not
-  password hashing. `SecurityConfigurer` also configures a no-op password
-  encoder. Use Argon2id or BCrypt through Spring's `PasswordEncoder` before a
-  production rollout; do not copy this storage behavior into the new design.
-- Password reset/verification token expiry code uses `plusDays` with a value
-  named as minutes (`60 * 24`), so review and correct expiry semantics before
-  relying on those links.
-- The API does not currently bind login to a six-digit site code or expose a
-  dedicated `force_password_change` field. Existing first-login flags such as
-  `new_user_validate_web` are not the same as a well-defined temporary-password
-  lifecycle.
-- `SecurityController.updatePassword` logs the submitted new password at error
-  level. Remove credential values from logs before production use.
-- Never make the shared word `user` a production temporary password. The
-  mockup uses it only because that is the requested demonstration; production
-  should issue a per-user one-time random credential or activation link, store
-  only a modern password hash, and require a change on first use.
+These are observations from the inspected source, not a claim that every
+deployment has the same active profile or configuration.
 
-## Mockup flow implemented here
+## What the mockup demonstrates
 
-The mockup now demonstrates:
+[`index.html`](./index.html) is a standalone prototype, not a live API client.
+It uses seeded accounts and sample outbound records; role switching simulates
+views and is not server-side authorization.
 
-1. A bootstrapped Super Admin can preview seeded Head, Manager, and Staff roles
-   using **Profile → Demo role preview**.
-2. A user enters the demo site code, user ID, and password. Demo site code is
-   `123456`; seeded accounts initially use `ZanderDemo123!`.
-3. **Forgot password?** records a local pending request and tells the user who
-   to contact: Staff → their Manager; Manager → Head; Head → Super Admin.
-4. The authorized manager can see the request on **Administration → Users**,
-   or open a permitted user's record, then reset it to the demo default
-   password `user`. A Manager can reset Staff in their own sub-department; a
-   Head can reset Managers/Staff; a Super Admin can reset any role.
-5. The user signs in with `user`, opens the profile icon, and changes their
-   password using current/new/confirm fields. The demo requires at least eight
-   characters for the new password and removes the forced-change notice after
-   success.
+- The four top-level departments (Inbound, Inventory, Outbound, Returns) and
+  their pages are fixed product structure, not customer-created configuration.
+  The mockup allows adding/editing sub-departments under one of those fixed
+  departments; it does not provide top-level department or page creation.
+- Super Admin controls which fixed pages and sub-pages each role can access.
+  These grants are site configuration and must be persisted and enforced by
+  the backend as well as reflected in frontend navigation and actions. Hiding
+  a page in the UI is not authorization.
+- Creating a sub-department requires choosing its parent Department, entering
+  the Sub-department name, and optionally entering Manager display name and
+  Staff display name. Editing an existing sub-department can change its name
+  and both labels. The manager/staff labels are scoped to that department +
+  sub-department assignment; blank labels fall back to the standard Manager
+  and Staff labels.
+- The role hierarchy is Super Admin → Head → Manager → Staff, with scoped
+  manager/staff assignments. The mockup also lets Super Admin preview roles
+  and configure page access.
+- Password reset authorization allows a Manager to reset Staff in their
+  department/sub-department, a Head to reset Managers or Staff directly, and
+  Super Admin to reset other site users. A Head does not need to wait for a
+  Staff member's Manager to perform the reset.
+- Terminology settings rename UI labels for roles, departments,
+  sub-departments, manager/work labels, and fulfillment terms such as Picklist
+  and Group Picklist. These labels should not change permission keys or API
+  contracts.
+- Super Admin can configure master-page columns per role. This mockup editor
+  toggles visibility; it does not offer reordering for those master tables.
+- Outbound page column preferences are per role and page/tab and preserve an
+  order. The mockup includes invoice/picklist, checker lookup, pick/scan, and
+  submission views.
+- The current demo stores these settings in the browser:
+  `wmsTerminology`, `wmsRolePageAccess`,
+  `wmsMasterColumns:v1:<page>:<role>`, and
+  `wmsOutboundColumns:v1:<role>:<tab>`. Browser localStorage is per browser
+  profile/device and is not shared with another user or browser. It is not
+  durable application configuration.
+-   The mockup provides both email self-service and role-based reset requests. The
+  email option only simulates the intent; no messages or reset links are sent.
+  The approver flow simulates a temporary password `user`; it changes no
+  database rows. Keep `user` as demo-only: production reset should issue a
+  short-lived, single-use random credential or activation link, then require a
+  password change.
 
-The profile displays basic user, role, site, department, and manager details.
-The profile icon opens this page for every role. Role preview is a mockup-only
-Super Admin control; it does not replace server-side authorization.
-
-Passwords and reset requests in this implementation are held in JavaScript
-memory only and disappear on reload. The six-digit code is a fixed demo value,
-not a client site credential. No actual notification is sent; the request is
-shown only to authorized approvers in the same browser session.
-
-## Recommended target design
-
-Keep authorization identifiers stable and customize labels separately:
-
-- `role_key` values such as `SUPER_ADMIN`, `HEAD`, `MANAGER`, `STAFF` are
-  immutable system keys.
-- `site_role_alias` maps a site's role key to its customer-facing label
-  (`HEAD` → “Warehouse Lead”, for example). Changing the label must not change
-  the security authority.
-- A `site_term` table (or equivalent settings JSON) maps configurable UI terms
-  such as department, warehouse, and staff labels. Keep API field names and
-  database keys stable; only presentation terminology varies by client.
-- Treat the six-digit `site_code` as a site lookup identifier, not a secret or
-  a substitute for the user's password. Enforce uniqueness and format at the
-  database and API layers.
-- Store explicit reporting relationships (`manager_user_id`) and check reset
-  scope server-side, in the same site, rather than trusting a role selector or
-  client-side route guard.
-
-### One standard product, configurable per site
-
-The goal is not one giant deployment that must be online to every client. It is
-one versioned product and one configuration model, with the option to run the
-client data plane locally:
-
-- **Control plane (Zander-operated):** central site registry, site-code
-  assignments, configuration versions, license/release metadata, and the
-  centrally authenticated support/admin portal. Keep this database limited to
-  control-plane data unless a customer explicitly chooses cloud-hosted WMS data.
-- **Site data plane (client-operated):** the standard web/API release and that
-  client's PostgreSQL data. Keep client operational records and credentials in
-  the client's environment for on-prem deployments.
-- **Configuration channel:** the on-prem site initiates an outbound,
-  mutually-authenticated connection to fetch a signed, versioned configuration
-  bundle. Do not expose the client's database or an unauthenticated admin API
-  to the internet. A site with no outbound access can import the same signed
-  bundle through an approved offline deployment process.
-- **Admin portal:** a Zander platform operator may select a site only after
-  strong authentication (MFA), an explicit support grant, and audited
-  site-scoped authorization. The client's Site Super Admin manages only their
-  own site. These are separate authorities even if the UI uses similar labels.
-
-This allows an operator at Zander or an authorized operator at the client to
-use the same standard portal and manage the same site configuration. At the
-client, the portal can talk directly to the local API. From Zander, access must
-go through the approved outbound relay/agent or the client's VPN; a local-only
-API is not magically reachable from the cloud. The agent should accept only
-signed, versioned, allow-listed configuration changes and report its applied
-version. Remote support access should be time-bounded, revocable, and audited;
-avoid a shared global account or silent impersonation.
-
-For the first increment, preserve today's PostgreSQL tenant schemas and data
-layout. Add control-plane configuration records keyed by stable `site_id`, and
-adapt the API/web to load those records as runtime configuration. This avoids
-moving business tables while separating customization from client-specific
-code. Continue using the same API artifact/image at each site; the site-specific
-database URL, secrets, and connection pool remain deployment secrets, not
-control-plane values sent to the browser. The current web runtime config already
-demonstrates one web image selected by tenant runtime config, but the reviewed
-API still has environment-specific DB profiles and there is no remote
-configuration agent/control-plane channel yet.
-
-Initially map each existing `public.tbl_tenant.tenantId` to the new stable
-control-plane `site_id`; keep existing `schemaName` and login resolution working
-through a compatibility adapter. The control plane should not duplicate
-passwords or business data from the tenant database.
-
-Store configuration as normalized, versioned records rather than client forks:
-
-| Concern | Stable key / record | Site-specific value |
-|---|---|---|
-| Site | `site_id`; unique six-digit `site_code` lookup | display name, enabled state, supported release |
-| Roles | immutable `role_key` such as `HEAD` or `STAFF` | alias such as “Warehouse Lead” |
-| Departments | immutable `department_key` | display name, enabled state, order |
-| Sub-departments | immutable key scoped to department | display name, enabled state, order |
-| Terms | semantic `term_key` such as `STAFF_LABEL` | translated/customer-facing label |
-| Permissions | stable role/action/resource keys | permitted grants within a bounded policy |
-| Site features | stable feature keys | enabled values and validated settings |
-
-Web components should render labels from a versioned configuration response.
-API routes, database column names, authorization checks, and integration
-contracts must use stable keys, never aliases. A label change should not require
-a schema migration or alter a user's authority. Use configuration validation,
-preview, publish/rollback, and an audit record for each change. Cache the
-active version at each site so normal work continues during a control-plane
-outage; show whether a site is current or has unapplied changes.
-
-Do not make the Super Admin UI a general-purpose SQL editor or allow arbitrary
-runtime role creation to grant privilege. Offer a curated role catalog and
-permission templates; allow bounded overrides, with high-risk grants requiring
-explicit approval and audit. Keep “platform operator”, “site super admin”,
-“Head”, “Manager”, and “Staff” as distinct stable authority keys. Customer
-aliases affect only display text.
-
-### Minimal migration plan
-
-1. **Stabilize identity first:** map current `tbl_role.role_id` values to
-   canonical immutable role keys while preserving the old IDs for backward
-   compatibility. Introduce a separate display-alias lookup; stop treating
-   editable `role_name` as the authorization source. Add the six-digit
-   `site_code` as a unique site registry field; do not overload `tenantCode` or
-   the existing four-digit `appcode`.
-2. **Make configuration data-driven:** add site-scoped department,
-   sub-department, term/alias, feature, and role-permission configuration with
-   a version number. First migrate today's labels and grants into defaults so
-   existing clients see no behavior change. Add API read/update/publish
-   endpoints with validation and audit.
-3. **Separate modules in the code, not deployments:** introduce bounded API
-   services/modules for identity, authorization, site configuration, user
-   lifecycle, and audit. Keep the existing endpoints as compatibility adapters
-   to those services; migrate the web client incrementally. Avoid per-customer
-   branches and new schema copies just to rename “Head” or “Department”.
-4. **Support remote administration:** first let the site API load local
-   configuration. Then add the central registry and outbound site agent for
-   remote changes, with signed revisions, acknowledgement, rollback, and
-   offline behavior. A central portal without that connection (or VPN) can
-   administer only cloud-hosted site data, not a customer's isolated database.
-5. **Harden auth before rollout:** replace reversible Base64/no-op credential
-   handling with Argon2id or BCrypt and a migration-on-success strategy;
-   revoke existing sessions on administrative reset; remove secrets from logs;
-   test the hierarchy and every tenant/site boundary server-side.
-
-This is a gradual transition. Do not consolidate all current tenant schemas
-into one shared schema as a prerequisite. A future row-level multi-tenant model
-could reduce schema management, but it is a separate migration with much
-greater isolation and regression risk. The first modularity win is standard
-code plus configuration and stable identities, not an immediate database
-rewrite.
-
-One possible PostgreSQL core schema (illustrative, not yet applied):
-
-```sql
-CREATE TABLE site (
-    site_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    site_code CHAR(6) NOT NULL UNIQUE CHECK (site_code ~ '^[0-9]{6}$'),
-    display_name TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'ACTIVE'
-);
-
-CREATE TABLE role_catalog (
-    role_key TEXT PRIMARY KEY
-);
-
-CREATE TABLE site_role_alias (
-    site_id UUID NOT NULL REFERENCES site(site_id),
-    role_key TEXT NOT NULL REFERENCES role_catalog(role_key),
-    display_label TEXT NOT NULL,
-    PRIMARY KEY (site_id, role_key)
-);
-
-CREATE TABLE site_term (
-    site_id UUID NOT NULL REFERENCES site(site_id),
-    term_key TEXT NOT NULL,
-    display_label TEXT NOT NULL,
-    PRIMARY KEY (site_id, term_key)
-);
-
-CREATE TABLE app_user (
-    user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    site_id UUID NOT NULL REFERENCES site(site_id),
-    login_id TEXT NOT NULL,
-    full_name TEXT NOT NULL,
-    email TEXT,
-    role_key TEXT NOT NULL REFERENCES role_catalog(role_key),
-    manager_user_id UUID,
-    created_by UUID,
-    department_key TEXT,
-    subdepartment_key TEXT,
-    status TEXT NOT NULL DEFAULT 'ACTIVE',
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    UNIQUE (site_id, login_id),
-    UNIQUE (site_id, user_id),
-    FOREIGN KEY (site_id, manager_user_id)
-        REFERENCES app_user(site_id, user_id),
-    FOREIGN KEY (site_id, created_by)
-        REFERENCES app_user(site_id, user_id)
-);
-
-CREATE TABLE user_credential (
-    user_id UUID PRIMARY KEY REFERENCES app_user(user_id),
-    password_hash TEXT NOT NULL,
-    force_password_change BOOLEAN NOT NULL DEFAULT FALSE,
-    password_changed_at TIMESTAMPTZ,
-    failed_attempts INTEGER NOT NULL DEFAULT 0,
-    locked_until TIMESTAMPTZ
-);
-
-CREATE TABLE password_reset_request (
-    request_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    site_id UUID NOT NULL REFERENCES site(site_id),
-    target_user_id UUID NOT NULL REFERENCES app_user(user_id),
-    status TEXT NOT NULL DEFAULT 'PENDING'
-        CHECK (status IN ('PENDING', 'APPROVED', 'COMPLETED', 'REJECTED')),
-    requested_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    resolved_by UUID,
-    resolved_at TIMESTAMPTZ,
-    FOREIGN KEY (site_id, target_user_id)
-        REFERENCES app_user(site_id, user_id),
-    FOREIGN KEY (site_id, resolved_by)
-        REFERENCES app_user(site_id, user_id)
-);
-
-CREATE TABLE user_session (
-    session_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES app_user(user_id),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    expires_at TIMESTAMPTZ NOT NULL,
-    revoked_at TIMESTAMPTZ
-);
-
-CREATE TABLE password_history (
-    user_id UUID NOT NULL REFERENCES app_user(user_id),
-    changed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    password_hash TEXT NOT NULL,
-    PRIMARY KEY (user_id, changed_at)
-);
-
-CREATE TABLE security_audit (
-    event_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    site_id UUID NOT NULL REFERENCES site(site_id),
-    actor_user_id UUID,
-    subject_user_id UUID,
-    event_type TEXT NOT NULL,
-    details JSONB NOT NULL DEFAULT '{}'::jsonb,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    FOREIGN KEY (site_id, actor_user_id)
-        REFERENCES app_user(site_id, user_id),
-    FOREIGN KEY (site_id, subject_user_id)
-        REFERENCES app_user(site_id, user_id)
-);
-
-CREATE TABLE site_department (
-    site_id UUID NOT NULL REFERENCES site(site_id),
-    department_key TEXT NOT NULL,
-    display_label TEXT NOT NULL,
-    enabled BOOLEAN NOT NULL DEFAULT TRUE,
-    sort_order INTEGER NOT NULL DEFAULT 0,
-    PRIMARY KEY (site_id, department_key)
-);
-
-CREATE TABLE site_subdepartment (
-    site_id UUID NOT NULL,
-    department_key TEXT NOT NULL,
-    subdepartment_key TEXT NOT NULL,
-    display_label TEXT NOT NULL,
-    enabled BOOLEAN NOT NULL DEFAULT TRUE,
-    sort_order INTEGER NOT NULL DEFAULT 0,
-    PRIMARY KEY (site_id, department_key, subdepartment_key),
-    FOREIGN KEY (site_id, department_key)
-        REFERENCES site_department(site_id, department_key)
-);
-
-CREATE TABLE site_role_permission (
-    site_id UUID NOT NULL REFERENCES site(site_id),
-    role_key TEXT NOT NULL REFERENCES role_catalog(role_key),
-    permission_key TEXT NOT NULL,
-    enabled BOOLEAN NOT NULL DEFAULT FALSE,
-    PRIMARY KEY (site_id, role_key, permission_key)
-);
-
-CREATE TABLE site_config_revision (
-    site_id UUID NOT NULL REFERENCES site(site_id),
-    revision_no INTEGER NOT NULL,
-    status TEXT NOT NULL CHECK (status IN ('DRAFT', 'PUBLISHED', 'RETIRED')),
-    config_snapshot JSONB NOT NULL,
-    created_by UUID,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    published_at TIMESTAMPTZ,
-    PRIMARY KEY (site_id, revision_no),
-    FOREIGN KEY (site_id, created_by)
-        REFERENCES app_user(site_id, user_id)
-);
-```
-
-In the full application, add a scoped warehouse/department assignment table and
-an append-only security audit table. Add indexes on `(site_id, login_id)`,
-`(site_id, manager_user_id)`, and pending reset requests. Enforce all role
-hierarchy rules in the API inside a transaction, and revoke existing sessions
-after a reset. The revision snapshot is published atomically; the site agent
-only applies a verified `PUBLISHED` revision and reports the applied revision
-to the control plane.
-
-### Recommended lifecycle and endpoint contract
-
-1. A one-time deployment/bootstrap command creates the first
-   `SUPER_ADMIN` (without a committed default password).
-2. Super Admin creates a Head. Head creates Managers and Staff. Manager creates
-   Staff only within assigned scope. The role code stays unchanged when the
-   displayed alias is edited.
-3. Login: `POST /auth/login` with `{ "siteCode", "userId", "password" }`.
-   Resolve `siteCode` to `site_id`, validate credentials, then return a JWT
-   containing stable `user_id`, `site_id`, and `role_key` claims.
-4. Self-service forgot password: retain the existing token/email approach for
-   users who can access their verified recovery channel. Reuse its token
-   lifecycle only after correcting and testing expiry, one-time use, tenant
-   binding, rate limits, and generic responses that do not disclose whether an
-   account exists.
-5. Manager-mediated recovery: add
-   `POST /auth/password-reset-requests` with site code and user ID for users who
-   cannot use email. Return a generic response and create a pending request
-   visible to the authorized approver. Staff requests go to their assigned
-   Manager; Manager to Head; Head to the site Super Admin. The platform
-   operator is a separately granted escalation path, not an implicit
-   site-wide account.
-6. Approver: `POST /users/{userId}/password-reset`. The server verifies
-   same-site scope and the role hierarchy, issues a **per-user one-time random
-   reset secret or activation link** through a verified channel, sets
-   `force_password_change = true`, revokes sessions, expires prior reset
-   tokens, and writes an audit event. Never expose a shared literal password
-   such as `user` to all accounts or show the generated secret to the approver.
-7. First login after reset must require a password change through
-   `POST /auth/password-change`. Validate the new/confirm values, hash the new
-   password, clear `force_password_change`, and record a password-change audit
-   event. If the user lacks any verified recovery channel, use the
-   manager-mediated approval and a one-time credential that the user changes
-   immediately.
-
-**Recommendation:** use a hybrid, not either flow alone. Keep self-service
-email reset as the quickest path for ordinary users; provide the manager
-approval/reset path as a controlled fallback for warehouse users without
-reliable email. A manager-mediated request is safer than an unauthenticated
-public "set password to `user`" action, but it should issue a short-lived,
-single-use credential rather than a predictable shared default. The profile
-change form is useful, but a mandatory first-login change page is needed too,
-because a user may sign in on a scanner or another route without visiting the
-profile first.
+## Recommended deployment and bootstrap
 
 ```mermaid
-flowchart TD
-  subgraph Control["Zander control plane"]
-    PORTAL["Admin portal<br/>MFA + site-scoped grants"]
-    REG["Site registry + config versions"]
-    PORTAL --> REG
+flowchart LR
+  subgraph Site["Client site network"]
+    Browser["User browser / workstation"]
+    Web["Standard Zander web container"]
+    API["Standard Zander API container"]
+    DB[("Local PostgreSQL<br/>site tenant schema")]
+    ERP["Client ERP / ERP API"]
+    Installer["Onsite installer<br/>one-time bootstrap"]
+    Browser --> Web --> API --> DB
+    API <-->|"site-local connection / approved protocol"| ERP
+    Installer -->|"site code + one-time bootstrap setup"| API
   end
-  subgraph Site["Client site data plane"]
-    AGENT["Outbound authenticated config agent"]
-    WEB["Standard web/API release"]
-    DB["Client PostgreSQL<br/>existing tenant schemas retained initially"]
-    AGENT -->|"verified config revision"| WEB
-    WEB --> DB
-  end
-  REG -->|"signed versioned config"| AGENT
-  LOCAL["Client operator on site/VPN"] --> PORTAL
-  SUPPORT["Zander operator<br/>approved time-bound support grant"] --> PORTAL
-
-  BOOT["One-time bootstrap"] --> SA["Site SUPER_ADMIN"]
-  SA -->|creates| HEAD["HEAD"]
-  HEAD -->|creates| MAN["MANAGER"]
-  MAN -->|creates within scope| STAFF["STAFF"]
-  TERMS["Stable role/term keys<br/>+ site-specific aliases"] --> REG
-
-  STAFF -->|email available| SELF["Verified one-time reset link"]
-  STAFF -->|email unavailable| REQ["Manager-mediated request"]
-  REQ --> MAN
-  MAN -->|Manager recovery escalates| HEAD
-  HEAD -->|Head recovery escalates| SA
-  SA -->|approved reset| TEMP["One-time per-user credential<br/>force_password_change=true"]
-  MAN -->|approved Staff reset| TEMP
-  HEAD -->|approved Manager/Staff reset| TEMP
-  SELF --> CHANGE["Mandatory password change"]
-  TEMP --> CHANGE
-  CHANGE --> HASH["Store strong password hash<br/>revoke old sessions"]
+  Operator["Client Super Admin"] --> Browser
+  Support["Authorized Zander operator<br/>onsite or client-approved VPN"] --> Browser
 ```
 
-## Existing picklist-start behavior
+1. Ship the same versioned web/API images and schema migrations to every site.
+   The installer supplies only deployment-specific settings (database
+   connection, tenant/site identity, and ERP connectivity). Do not bake client
+   credentials or a default Super Admin password into an image or web bundle.
+2. Before installation, allocate/record the six-digit site code and Super
+   Admin login ID if the workflow needs them to be known in advance. The
+   installer initializes the local site record and creates the first
+   Super Admin directly in the site's database through a one-time bootstrap
+   command or setup endpoint that is disabled after use.
+3. Set the initial password through an installation secret prompt/secret
+   mount, or generate a one-time random credential and deliver it out of band.
+   Store only a strong password hash. Require a password change at first login,
+   revoke/expire the bootstrap credential, and record the bootstrap event.
+4. The site code is an identifier/routing input, not a password or substitute
+   for authentication. Validate its format and resolve it only against the
+   local site's configuration. If only one site is served by an installation,
+   it can be preconfigured locally; no cloud lookup is needed.
+5. After setup, the Super Admin configures roles, departments,
+   sub-departments, terms, page access, columns, and ERP connectivity from the
+   local app. These settings are stored in the site's PostgreSQL database.
+6. If Zander staff need to operate remotely, use the client's approved VPN or
+   other explicitly authorized network access to this same local application.
+   Without that path, remote access is not available. There is no implicit
+   cloud Super Admin in this design.
 
-The Start actions on Picklist and Group Picklist use the themed offline-device
-confirmation and preserve the existing outbound role/permission checks.
-Choosing **No** leaves the record unchanged. Choosing **YES** simulates the
-on-prem start response (`code: "0000"`, `message: "Scan Started"`), updates the
-mock record, and opens the corresponding checking view; barcode submission
-remains available from that view. In on-prem, the success routes are
-`/en/home/invoice-checking/{picklistNumber}` for a picklist and
-`/en/home/invoice-details/{groupPicklistNumber}` for a group picklist.
+No Supabase/cloud database is required for this deployment. A cloud service may
+later be used for a separately approved purpose (for example release
+distribution), but it should not be a dependency for login, site setup, user
+management, configuration, or WMS operations.
 
-This is a standalone prototype and does not call the live API or device.
-On-prem proceeds directly when `device-handshake` returns `"0000"`; any other
-response opens the manual-processing confirmation. After confirmation, it
-starts a picklist with `pick-list-start-scan/{picklistId}` or a group picklist
-with `group-pick-list-start-scan/{groupPicklistItemId}`. Those endpoints return
-the common `{ code, message, data }` result; the services report `"0000"` with
-`"Scan Started"` on success and `"1111"` with `"Error While Started Scan"` when
-start fails. The web client also handles `"2222"` as an already-started response.
+## Local configuration model
+
+Keep stable machine identities and client-facing aliases separate. The
+existing tenant-schema approach can be retained initially: add/migrate these
+records into the site's local tenant schema, not a central control-plane DB.
+Prefer extending current tables and adding only the configuration tables the
+API does not already have.
+
+| Local PostgreSQL table / area | Suggested responsibility |
+|---|---|
+| `site_configuration` | Six-digit `site_code`, display name, setup state, timezone, active config version. One row per installation/site. |
+| Existing `tbl_user`, `tbl_user_auth`, `tbl_user_session` | Users and credentials stay local; add explicit `force_password_change` / reset-state fields through a migration if needed. |
+| Existing `tbl_role` plus `role_alias` | Keep immutable `role_key` / existing role ID as authority; store editable per-site role labels separately. Do not authorize on aliases. |
+| Fixed department catalog (application-defined) | The four supported `department_key` values and their page/module associations are fixed in the product. They are not inserted as customer-configurable department rows. |
+| `tbl_sub_department` (proposed) | Stable `subdepartment_key`, fixed parent `department_key`, display name, optional `manager_display_label` and `staff_display_label`, enabled state, and sort order. Constrain the parent key to Inbound, Inventory, Outbound, or Returns. This stores the selected parent and sub-department-specific role titles. Keep actual role keys `MANAGER` and `STAFF`; labels are presentation only. |
+| Existing `tbl_role_services`, `tbl_screen` or a normalized `role_page_permission` | Persist Super Admin-configured grants for each stable role and fixed `page_key`/`subpage_key`. Backend API authorization must check these grants on every corresponding read/write endpoint; the frontend uses them to render navigation and controls but does not enforce security by itself. Keep privileged actions and hierarchy restrictions enforced by API policy too. |
+| `site_term` | Stable term key plus configured display label (e.g. `picklist`, `group_picklist`, `staff`). |
+| `page_column_preference` | Unique by site/role/page (and tab where applicable); store visible column keys and ordinal position. Allow API to validate against a server-defined column catalogue. |
+| Existing `tbl_product`, `tbl_manufacturer`, `tbl_device`, `tbl_tray_master`, `tbl_checker_master` | Existing product/manufacturer/device/tray/checker masters; do not make duplicate mockup-only masters without a data gap. |
+| `erp_integration_config` or existing `tbl_integraration` | ERP type, URL/endpoint, enabled state, non-secret options. Store credentials in a protected secret store or encrypted at rest; never return them to the browser or log them. |
+| `erp_sync_state` | Per integration/feed cursor or `last_batch`, last success/error, and next retry state. Do not use a cursor without idempotent import behavior. |
+| `integration_run` / `configuration_audit` | Import outcomes and who changed/published configuration; redact credentials and sensitive payloads. |
+
+For column preferences, persist keys and order rather than display text. A row
+shape can be `(role_key, page_key, tab_key, column_key, visible, position)`,
+unique on `(role_key, page_key, tab_key, column_key)`. User aliases and
+terminology can change without rewriting operational data, role claims, routes,
+or physical database columns.
+
+For page access, use stable application-defined page and subpage keys rather
+than customer-created routes. A permission row can be keyed by
+`(role_key, page_key, subpage_key, permission_key)` with an enabled flag; a
+null/explicit sentinel subpage key can represent a top-level page grant.
+Super Admin updates these rows through a configuration API. On each request,
+the backend resolves the authenticated user's stable role and assignment scope,
+then denies access unless the corresponding grant and operation-level
+authorization are satisfied. Frontend navigation and button visibility should
+be derived from the same permission response, but backend checks remain
+authoritative. Protect permission administration itself so only Super Admin
+can change grants.
+
+The sub-department table above is a proposed addition in the site's local
+PostgreSQL tenant schema; there is no existing department/sub-department table
+identified for this mockup configuration. The four fixed department keys and
+their pages stay in the application catalog. The prototype currently saves
+sub-department names and manager/staff display labels in `wmsTerminology` in
+browser localStorage. Persist the selected fixed parent key and each
+sub-department's labels in `tbl_sub_department`; absent labels fall back to
+the standard “Manager” and “Staff” terms. Do not create a customer-editable
+department table or dynamic department/page registry unless the product scope
+changes.
+
+The role hierarchy in the API must verify the actor's role and scope on every
+create/reset/configuration request. A Head may administer Managers/Staff in
+allowed scope; a Manager may administer Staff assigned to that manager;
+Super Admin may administer site users. UI role preview is never a grant.
+Department/subdepartment assignment should likewise be validated server-side.
+
+## Outbound ERP → picklist → device flow
+
+### Existing local operational data
+
+The on-prem API already has local tables for the normalized outbound workflow:
+
+| Table | Meaning |
+|---|---|
+| `tbl_pick_list_group` | Group Picklist header/status, related invoices, checker, scan/start/end and packaging state. |
+| `tbl_pick_list` | Picklist records, group number, invoice/location/manufacturer and outbound status/timing fields. |
+| `tbl_pick_list_item` | Picklist line items such as product, batch, quantities, prices, scan status and picklist linkage. |
+| `tbl_invoice_line_item` | Invoice-level source/detail lines used by group/invoice workflows. |
+| `tbl_product`, `tbl_manufacturer` | Product and manufacturer masters. |
+| `tbl_tray_master`, `tbl_checker_master`, `tbl_device`, `tbl_device_user_mapping` | Tray, checker, device and device/user assignment data. |
+
+These tables show where API-level outbound data is stored. They do not prove
+that a particular ERP feed is active or that all client ERP fields map
+identically.
+
+### API read/work routes already present
+
+The picklist and group-picklist controllers are under `/rest/api/v1`:
+
+- Picklists: `GET /picklists`, `GET /fetch-pick-list-all`,
+  `GET /fetch-pick-list-detail/{picklistId}`,
+  `GET /fetch-pick-list-one/{picklistId}`, and `GET /page/picklist`.
+- Group Picklists: `GET /fetch-group-pick-list-all`,
+  `GET /fetch-group-pick-list-one/{groupPicklistItemId}`,
+  `GET /fetch-group-pick-list-one-view/{groupPicklistItemId}`, and
+  `GET /page/group-pick-list`.
+- Work operations include picklist/group start-scan, assignment, scan, and
+  completion routes. These operate on records already in the local database;
+  they are not the ERP import route.
+- Tray routes include `GET /all/tray`, `GET /get-all-tray`,
+  `GET /active/trays`, and tray create/update/bulk-upload operations.
+- Product and manufacturer controllers expose local read/CRUD/upload routes.
+  Device routes expose local device and handshake operations.
+
+Confirm exact controller base mappings and payloads against the deployed API
+version before implementing a client; route names alone do not guarantee a
+stable contract.
+
+### ERP import evidence and gap
+
+`ItrazeIntegrationService` contains a Wondersoft token request
+(`POST {url}/Token`, method name `GetToken`) and a picklist-detail request
+(`POST {url}/ProcessData`, method name `GetpicklistDetails`, with `Params`).
+`tbl_integraration` stores integration URL/user/password/status fields, and a
+`tbl_wondersoft_job` model/repository provides `lastBatch` state.
+
+In the reviewed source, I found no active caller wiring that
+`GetpicklistDetails` result into `tbl_pick_list`,
+`tbl_pick_list_group`, and `tbl_pick_list_item`, and no active scheduler for
+that picklist import. `BatchSyncScheduler` is commented out. Therefore the
+existing GET endpoints prove that the API can serve local records, not that
+picklists are automatically fetched from the ERP. Another client-specific
+process may exist outside the reviewed code; verify it and the ERP's exact
+payload/specification before replacing it.
+
+### Smallest practical integration
+
+Implement a site-local server-side ERP adapter/job (or accept an authenticated
+ERP push) that:
+
+1. Uses the local integration configuration/secret to authenticate to the
+   ERP. The browser never receives ERP credentials.
+2. Fetches changed outbound source records, including invoices/lines and the
+   fields needed to identify the ERP picklist and group. Start with the
+   existing Wondersoft helper only if the deployed ERP is Wondersoft and its
+   response contract is confirmed.
+3. Maps ERP identifiers into stable local source keys, then upserts the
+   group header, picklist header(s), line items, and relevant invoice detail
+   records transactionally. Preserve ERP IDs/source timestamps for traceability.
+4. Uses a unique source identifier and idempotent upsert so retries do not
+   duplicate groups/lines. Advance `lastBatch`/cursor only after the
+   transaction commits; keep failures visible in a sync-run record and retry
+   safely.
+5. Lets the existing local list/detail routes serve the imported records to
+   web/mobile clients. Start/scan/complete actions update local operational
+   state and should not call the ERP unless the integration contract explicitly
+   requires a write-back.
+6. Builds Group Picklist membership according to the ERP's confirmed grouping
+   rule. Do not infer the rule from the current group tables or UI labels.
+
+For a first version, keep the integration inside the on-prem API or a
+co-deployed site-local worker. Add the smallest isolated import service and
+cursor/audit storage; avoid a cloud sync dependency or a client-specific
+frontend fork.
+
+```mermaid
+flowchart LR
+  ERP["Client ERP"] -->|"site-local pull or authenticated push"| Adapter["On-prem ERP adapter"]
+  Secret["Local protected integration secret"] --> Adapter
+  Cursor["Local sync cursor + run status"] <--> Adapter
+  Adapter -->|"idempotent transaction"| DB[("Local PostgreSQL")]
+  DB --> G["tbl_pick_list_group"]
+  DB --> P["tbl_pick_list"]
+  DB --> I["tbl_pick_list_item"]
+  DB --> M["Product / manufacturer / invoice / tray / device masters"]
+  Browser["Web / mobile client"] --> API["On-prem Zander API"]
+  G --> API
+  P --> API
+  I --> API
+  M --> API
+  API --> Browser
+```
+
+## Password recovery target
+
+Keep both recovery paths: email self-service for users with a verified email,
+and manager-mediated reset for users who cannot use email or need administrator
+help. The profile page also supports authenticated password changes. The
+mockup presents both options, but neither sends real email nor updates the API.
+Production should use server-verified authorization:
+
+1. A user requests help; Staff requests normally go to their Manager, Manager
+   requests go to Head, and Head requests go to Super Admin. A Head may also
+   directly reset a Staff account without waiting for the Manager; Super Admin
+   can reset site users. Store a pending request and audit its decision.
+2. The authorized approver triggers reset for the target user. Issue a
+   per-user, short-lived, single-use random credential or activation link;
+   revoke existing sessions and invalidate earlier reset tokens.
+3. Require a password change at first login and from the profile page. Hash
+   with Argon2id/BCrypt and audit the reset/change without logging secrets.
+4. Preserve the existing email/token forgot-password path for users with a
+   verified recovery address. Harden it with generic responses, rate limits,
+   one-time tokens bound to the local site, and tested expiry. Keep the
+   manager-approved path alongside it as an alternate/fallback. Neither path
+   should expose whether an account exists in public responses.
+
+This preserves the mockup's chain-of-approval goal without a shared predictable
+default password. The demo value `user` is not suitable for production.
+
+## Suggested implementation order
+
+1. Confirm the production site topology, six-digit site-code ownership,
+   bootstrap input method, actual ERP product/payload, and existing external
+   import process with the onsite team.
+2. Add local one-time bootstrap and site configuration migrations; seed
+   canonical roles, four departments, current subdepartments, and default
+   terminology.
+3. Migrate the mockup's browser-only settings into API-backed local PostgreSQL
+   settings. Preserve the existing UI shape but fetch/save preferences by
+   stable role/page/column keys.
+4. Persist Super Admin's role-to-page/subpage grants and enforce them in API
+   authorization for every endpoint; use the same grants to render frontend
+   navigation. Enforce department scope, reset, and configuration rules in API
+   services; never trust browser role switching or alias strings.
+5. Harden password hashing, reset expiry, session revocation, and credential
+   logging before exposing the new reset flow.
+6. Confirm the real ERP import contract, then add a site-local idempotent
+   import with visible cursor/run status and tests for retries, updates,
+   duplicate deliveries, and partial failures.
+7. Keep schema migrations backward-compatible and preserve current picklist,
+   group-picklist, scanning, and device workflows while the web app moves from
+   mock data to the existing API.
+
+## Mockup picklist-start behavior
+
+The mockup's Picklist and Group Picklist Start buttons simulate the
+offline-device confirmation and update sample UI state; they do not call the
+live API or hardware. In the on-prem web flow, successful device handshake
+starts directly; a non-success response can open manual-processing
+confirmation. The existing API start routes are
+`PUT /pick-list-start-scan/{picklistId}` and
+`PUT /group-pick-list-start-scan/{groupPicklistItemId}`. Keep the existing
+outbound role checks and response semantics when wiring persisted data.
