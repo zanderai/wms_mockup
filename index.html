@@ -726,22 +726,6 @@ pre{margin:0;overflow:auto;border-radius:12px;background:#111827;color:#f9fafb;p
 .picklist-toolbar .invoice-toolbar-group>.invoice-search{width:100%}
 .picklist-toolbar .outbound-view-select-wrap{width:100%;justify-content:space-between}
 .picklist-toolbar .outbound-view-select{flex:1}}
-.submission-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px}
-.submission-toolbar .invoice-tabs{min-width:0;align-items:center}
-.submission-toolbar .invoice-toolbar-group{min-width:min(280px,100%);margin-left:auto}
-.submission-search{width:min(280px,100%);flex:none}
-.submission-total{display:inline-flex;min-height:34px;align-items:center;gap:6px;border:1px solid var(--amber-border);border-radius:9px;background:var(--amber-soft);padding:5px 10px;color:var(--amber);font-size:12px;font-weight:700;white-space:nowrap}
-.submission-table th{background:#f1f5f9;color:#526174}
-.submission-table td{height:56px;font-size:12px}
-.submission-table .submission-tray-number{color:#2563a6;font-weight:750}
-.submission-modification{display:inline-flex;align-items:center;border:1px solid var(--amber-border);border-radius:7px;background:#facc15;padding:5px 9px;color:#fff;font-size:11px;font-weight:700;white-space:nowrap}
-.submission-action{min-width:70px;border-color:#2563a6;color:#2563a6}
-.submission-empty{padding:42px 16px;color:var(--muted-foreground);text-align:center}
-@media(max-width:640px){.submission-toolbar{align-items:stretch;padding:12px}
-.submission-toolbar .invoice-tabs{width:100%;flex-wrap:wrap}
-.submission-toolbar .invoice-toolbar-group{width:100%;min-width:0;margin-left:0}
-.submission-search{width:100%}
-.submission-table{min-width:760px}}
 .picklist-table th{background:#f1f5f9;color:#526174}
 .picklist-table td{font-size:12px;white-space:nowrap}
 .picklist-action{min-height:30px;border-radius:7px;padding:4px 11px;font-size:11px}
@@ -1209,10 +1193,6 @@ body:has(.outbound-check-full-page) .menu{display:none}
 #toast{right:var(--sp-3);left:var(--sp-3);bottom:var(--sp-3)}
 .toast{max-width:none}}
 @media(min-width:821px) and (max-width:900.99px){.content{padding:21px 15px 35px;padding-top:calc(var(--hit) + var(--sp-5))}}
-.picklist-assignment-overview{grid-template-columns:repeat(5,minmax(0,1fr));align-items:stretch}
-.picklist-assignment-overview h2{grid-column:1/-1}
-@media(max-width:1000px){.picklist-assignment-overview{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:600px){.picklist-assignment-overview{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(min-width:768px) and (max-width:1024px){.sb,.shell.sidebar-collapsed .sb{width:64px;overflow:visible}
 .shell.sidebar-collapsed .sb,.shell:not(.sidebar-collapsed) .sb{transform:none;visibility:visible;transition-delay:0s}
 .main,.shell.sidebar-collapsed .main,.shell:not(.sidebar-collapsed) .main{margin-left:64px}
@@ -1384,12 +1364,12 @@ const refreshLoginTerms=()=>{const id=`${termLabel("user")} ID`;document.querySe
 refreshLoginTerms();
 const ASG=[
 {k:"sa",name:"Jordan Davis",role:"Super Admin",dept:"All",sub:"—",wh:"*",scope:"All",status:"Active",source:"Manual",g:"*"},
-{k:"head",name:"Priya Nair",role:"Head",dept:"All",sub:"—",wh:WHS,scope:"All",status:"Active",source:"Manual",g:G("dashboard:v inbound-grn:vceax inbound-disc:vceax inventory-stock:vceax inventory-ledger:vx inventory-putaway:vceax inventory-transfer:vceax inventory-count:vceax outbound-orders:v outbound-pick:vceax outbound-check:vceax outbound-check-lookup:va outbound-picklist-assignment:va outbound-submission:va returns-cases:vceax returns-inspect:vceax returns-disp:vceax audit:vx md-product:vcex md-manufacturer:vcex md-device:vcex md-batch:vcex md-tray:vcex")},
-{k:"pm",name:"Rahul Menon",role:"Manager",dept:"Outbound",sub:"Picking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-orders:v outbound-pick:vceax outbound-picklist-assignment:va inventory-stock:v audit:v md-tray:vcex")},
+{k:"head",name:"Priya Nair",role:"Head",dept:"All",sub:"—",wh:WHS,scope:"All",status:"Active",source:"Manual",g:G("dashboard:v inbound-grn:vceax inbound-disc:vceax inventory-stock:vceax inventory-ledger:vx inventory-putaway:vceax inventory-transfer:vceax inventory-count:vceax outbound-orders:v outbound-pick:vceax outbound-check:vceax outbound-check-lookup:va returns-cases:vceax returns-inspect:vceax returns-disp:vceax audit:vx md-product:vcex md-manufacturer:vcex md-device:vcex md-batch:vcex md-tray:vcex")},
+{k:"pm",name:"Rahul Menon",role:"Manager",dept:"Outbound",sub:"Picking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-orders:v outbound-pick:vceax outbound-check-lookup:va inventory-stock:v audit:v md-tray:vcex")},
 {k:"ps",name:"Taylor Brooks",role:"Staff",dept:"Outbound",sub:"Picking",wh:["WH-01"],scope:"Own records",status:"Active",source:"ERP",g:G("outbound-orders:v outbound-pick:ve inventory-stock:v")},
-{k:"cm",name:"Mina Patel",role:"Manager",dept:"Outbound",sub:"Checking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-check:vceax outbound-check-lookup:va outbound-picklist-assignment:va outbound-submission:va outbound-orders:v audit:v")},
+{k:"cm",name:"Mina Patel",role:"Manager",dept:"Outbound",sub:"Checking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-check:vceax outbound-check-lookup:va outbound-orders:v audit:v")},
 {k:"cs",name:"Arjun Rao",role:"Staff",dept:"Outbound",sub:"Checking",wh:["WH-01"],scope:"Own records",status:"Active",source:"Manual",g:G("outbound-orders:v outbound-check:ve")},
-{k:"dm",name:"Sara Iqbal",role:"Manager",dept:"Outbound",sub:"Picking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-orders:v outbound-pick:vceax outbound-picklist-assignment:va inventory-stock:v audit:v md-tray:vcex")},
+{k:"dm",name:"Sara Iqbal",role:"Manager",dept:"Outbound",sub:"Picking",wh:["WH-01"],scope:"Sub-department",status:"Active",source:"Manual",g:G("dashboard:v outbound-orders:v outbound-pick:vceax outbound-check-lookup:va inventory-stock:v audit:v md-tray:vcex")},
 {k:"rm",name:"Dana Cole",role:"Manager",dept:"Inbound",sub:"Receiving",wh:WHS,scope:"Sub-department",source:"Manual",g:G("dashboard:v inbound-grn:vceax inbound-disc:vcea inventory-putaway:v inventory-stock:v audit:v md-product:vcex md-manufacturer:vcex md-device:vcex md-batch:vcex")},
 {k:"rs",name:"Omar Reyes",role:"Staff",dept:"Inbound",sub:"Receiving",wh:WHS,scope:"Own records",source:"Manual",g:G("inbound-grn:vce inbound-disc:vc inventory-putaway:ve")},
 {k:"im",name:"Ines Alva",role:"Manager",dept:"Inventory",sub:"Warehouse ops",wh:["WH-01"],scope:"Sub-department",source:"Manual",g:G("dashboard:v inventory-stock:vx inventory-ledger:vx inventory-putaway:vce inventory-transfer:vcea inventory-count:vceax audit:v")},
@@ -1410,6 +1390,8 @@ const saved=JSON.parse(localStorage.getItem(ROLE_ACCESS_STORAGE_KEY)||"{}");
 const headReset=!localStorage.getItem("wmsHeadAccessV2");if(headReset)localStorage.setItem("wmsHeadAccessV2","1");
 for(const [key,permissions] of Object.entries(saved))if(!(headReset&&key.endsWith("|Head"))&&permissions&&typeof permissions==="object"&&!Array.isArray(permissions)){
 const valid=Object.fromEntries(Object.entries(permissions).filter(([,value])=>typeof value==="string"&&/^[vceadx]*$/.test(value)));
+if(valid["outbound-picklist-assignment"]){valid["outbound-check-lookup"]=[...new Set(`${valid["outbound-check-lookup"]||""}${valid["outbound-picklist-assignment"]}`)].join("");delete valid["outbound-picklist-assignment"]}
+delete valid["outbound-submission"];
 if("reports" in valid)for(const [id] of REPORT_PERMISSION_PAGES)if(!(id in valid))valid[id]=valid.reports.includes("v")?"v":"";
 delete valid.reports;
 defaults[key]=mergeSavedVisibility(defaults[key],valid);
@@ -1446,7 +1428,7 @@ const persistModuleState=()=>{
 try{localStorage.setItem(MODULE_STATE_STORAGE_KEY,JSON.stringify(Object.fromEntries(Object.entries(MODS).map(([key,module])=>[key,module.en]))));return true}
 catch(error){console.error("Could not save module state.",error);toast("The module change is active for this session, but could not be saved in this browser.");return false}
 };
-const S={who:"sa",page:"dashboard",wh:"ALL",q:"",f:"",pk:"pm",dashboard:{mode:"cumulative",department:"Outbound"},lg:{q:"",mod:"",lvl:"",fail:0},dayEnd:{date:"",page:1},device:{page:1},deviceFleet:{query:""},batch:{page:1},orderInvoice:{_tab:"invoiced",get tab(){return this._tab},set tab(value){if(value!==this._tab)this.filter="all";this._tab=value},query:"",page:1,filter:"all",error:null},checkerLookup:{date:"2026-10-05",query:"",status:"all",checker:"all",page:1},picklistAssignment:{date:"2026-10-05",query:"",checkerId:"",filter:"available",page:1},submission:{query:"",filter:"modified",page:1},picking:{tab:"scan",floor:"",query:"",status:"",filter:"all",page:1},reports:{mode:"home",from:"2026-10-28",to:"2026-10-28",employee:"",batch:"",picklist:"",group:"",salesman:"",status:"",applied:false,deviceApplied:false,search:"",userSearch:"",view:"device",groupPage:1,groupStatus:"",groupSubmission:"",userId:"ps"},hc:[1,1,1,0,0,0,0]};
+const S={who:"sa",page:"dashboard",wh:"ALL",q:"",f:"",pk:"pm",dashboard:{mode:"cumulative",department:"Outbound"},lg:{q:"",mod:"",lvl:"",fail:0},dayEnd:{date:"",page:1},device:{page:1},deviceFleet:{query:""},batch:{page:1},orderInvoice:{_tab:"invoiced",get tab(){return this._tab},set tab(value){if(value!==this._tab)this.filter="all";this._tab=value},query:"",page:1,filter:"all",error:null},checkerLookup:{date:"2026-10-05",query:"",status:"all",checker:"all",assignCheckerId:"",page:1},picking:{tab:"scan",floor:"",query:"",status:"",filter:"all",page:1},reports:{mode:"home",from:"2026-10-28",to:"2026-10-28",employee:"",batch:"",picklist:"",group:"",salesman:"",status:"",applied:false,deviceApplied:false,search:"",userSearch:"",view:"device",groupPage:1,groupStatus:"",userId:"ps"},hc:[1,1,1,0,0,0,0]};
 const P=()=>ASG.find(a=>a.k===S.who),allowedWh=()=>P().wh==="*"?WHS:P().wh;
 const assignmentPermissions=assignment=>assignment.role==="Head"?ROLE_PAGE_ACCESS["All|—|Head"]||ROLE_PAGE_ACCESS[roleAccessKey(assignment)]||assignment.g:assignment.g==="*"?"*":ROLE_PAGE_ACCESS[roleAccessKey(assignment)]||assignment.g;
 const hasG=(id,l)=>{const permissions=assignmentPermissions(P());return permissions==="*"||(permissions[id]||"").includes(l)};
@@ -1507,12 +1489,6 @@ const scanState=i<20?"NEW":i<30?"IN-PROGRESS":i<45?"SCANNED":"SCANNED-ERROR",sta
 return{id:group,group,picklist,invoices,salesman:base[3],time:stamp,rawStatus:status,statusCode:status,get status(){return this.statusCode},set status(value){this.rawStatus=value;this.statusCode=value==="CHECKED"?"COMPLETED":value;if(value==="CHECKED")this.scanState="SCANNED"},scanState,get scan(){return this.scanState==="NEW"&&this.status==="STARTED"?"IN-PROGRESS":this.scanState},started:i>=20,startedAt:startTime,get startTime(){if(this.status==="STARTED"&&this.started&&!this.startedAt)this.startedAt=new Date().toISOString();return this.startedAt??null},
 checkerName:i>=30?["Mina Patel","Arjun Rao","Taylor Brooks"][i%3]:null,assignedTo:i>=20?["Mina Patel","Arjun Rao","Taylor Brooks"][i%3]:null,checkerSource:i>=30?"ERP":null,deviceId:i>=20?`Scanner-${String(i%3+1).padStart(2,"0")}`:null,picklistTime:picklistTimestamp,vdt:"2026-10-05",endTime:endTime===null?null:new Date(endTime).toISOString(),assignedAt:picklistTimestamp,idleTimeSeconds,
 packagingCasesCount:i%4===0?1:0,packagingBoxCount:i%4===1?1:0,packagingBagCount:i%3===0?1:0,packagingIcePackCount:i%5===0?1:0,totalDurationSeconds:durationSeconds,idlePercent:null,activeTime:null,apiStatus:i>=45?"ERROR":i>=30?"SYNCED":null,message:i===45?"Scanner sync failed.":null,scannedBy:i>=20?String(1000+i):null,checkerId:i>=30?String(500+i):null}
-});
-ORDER_INVOICES.forEach((row,index)=>{
-row.submissionStatus=row.apiStatus==="SYNCED"?"submitted":index===45?"queued":index===46?"processing":index>=47?"error":"pending";
-row.submittedBy=row.submissionStatus==="submitted"||row.submissionStatus==="queued"||row.submissionStatus==="processing"?"manager.checking":row.submissionStatus==="error"?"manager.checking":null;
-row.submissionTime=row.submissionStatus==="pending"?null:row.endTime||row.picklistTime;
-row.submissionResponse=row.submissionStatus==="error"?(row.message||"EasySol did not accept the completion request."):"";
 });
 const OUTBOUND_CHECK_RECORD={
 groupPicklistNumber:"1094683",picklistNumber:"3039",salesmanCode:"HBP-TRICHY OP PHARMACY",picklistTime:"2026-10-05T04:06:00.000+00:00",relatedInvoice:"693299",scan:"SCANNED-ERROR",apiStatus:null,deviceId:"palepu-dev0044",
@@ -1597,15 +1573,6 @@ return records;
 })();
 const outboundPicklistCheckSample=PICKLISTS.find(row=>row.scan==="SCANNED-ERROR");
 if(outboundPicklistCheckSample)Object.assign(outboundPicklistCheckSample,{picklistId:OUTBOUND_PICKLIST_CHECK.picklistId,picklistNumber:OUTBOUND_PICKLIST_CHECK.picklistNumber,groupPicklistNumber:OUTBOUND_PICKLIST_CHECK.groupPicklistNumber,picklistDate:"2026-09-19T00:00:00.000+00:00",picklistTime:OUTBOUND_PICKLIST_CHECK.picklistTime,relatedInvoices:OUTBOUND_PICKLIST_CHECK.relatedInvoices,salesmanCode:OUTBOUND_PICKLIST_CHECK.salesmanCode,floor:"1",godownLocation:OUTBOUND_PICKLIST_CHECK.relatedValue,godown:OUTBOUND_PICKLIST_CHECK.relatedValue,startTime:"2026-09-19T11:07:47.785+00:00",endTime:"2026-09-19T11:07:47.798+00:00",remarks:"QTYMISMATCH",apiStatus:null,deviceId:"palepu-dev0048",scannedBy:"277",checkerId:null,checkerName:null,status:"CHECKED",scan:"SCANNED-ERROR",completed:false});
-const PICKLIST_ASSIGNMENT_ROWS=PICKLISTS.slice(0,40);
-[[1,"ps"],[4,"cs"],[7,"ps"],[12,"cs"]].forEach(([index,userKey])=>{
-const row=PICKLIST_ASSIGNMENT_ROWS[index],checker=ASG.find(user=>user.k===userKey);
-if(row&&checker){row.status="ASSIGNED";row.checkerId=checker.userId;row.checkerName=checker.name;row.assignedAt="2026-10-05T03:45:00.000Z"}
-});
-[[20,"ps"],[21,"cs"],[22,"ps"]].forEach(([index,userKey])=>{
-const row=PICKLIST_ASSIGNMENT_ROWS[index],checker=ASG.find(user=>user.k===userKey);
-if(row&&checker){row.checkerId=checker.userId;row.checkerName=checker.name;row.assignedAt="2026-10-05T03:45:00.000Z"}
-});
 const PICKLIST_API_FIELDS=["createdOn","modifiedOn","createdBy","modifiedBy","versionNo","tenantId","picklistId","picklistNumber","groupPicklistNumber","picklistDate","godownLocation","salesmanCode","picklistTime","manufacturerId","stockistId","deliveryType","packagingCasesCount","packagingBoxCount","packagingBagCount","packagingIcePackCount","totalQuantity","totalItems","totalBills","grossAmount","totalTax","totalAmount","relatedInvoices","locationId","status","scan","remarks","completed","startTime","endTime","scannedBy","deviceId","floor","apiStatus","checkerId","checkerName"];
 const TRAY_API_FIELDS=["createdOn","modifiedOn","createdBy","modifiedBy","versionNo","tenantId","id","trayId","trayName","status"];
 const TRAY_UPLOAD_FIELDS=["trayId","trayName","status"];
@@ -1672,18 +1639,18 @@ pages["md-checker"].rows.forEach((row,index)=>row.checkerSource=index===0?"Manua
 L("admin-users","admin","Users","Super Admins can create all roles; Heads create Managers in their department; Managers create Staff in their assigned sub-department.",["User ID","User","Department","Sub-department","Role"],
 ASG.map(a=>`${a.userId}|${a.name}|${a.dept}|${a.sub}|${a.role}|${a.wh==="*"?(WHS[0]||"WH-01"):a.wh[0]||WHS[0]||"WH-01"}|—|${a.status||"Active"}|`),[["Deactivate","d","Inactive","Active"],["Reactivate","d","Active","Inactive"]],{newSt:"Active"});
 pages["admin-users"].rows.forEach((r,i)=>r.id=ASG[i].name);
-const CUST={dashboard:["Dashboard","Your queue, stock health and exceptions.","v","core"],"admin-depts":["Departments","Departments and sub-departments. Each department is a module.","vce","admin"],"admin-perms":["Roles & permissions","Choose which pages are visible for each assignment. Backend authorization is future scope.","vce","admin"],"admin-modules":["Modules","Licensed, installed and enabled are three separate states.","ve","admin"],"admin-settings":["Settings","Site, integrations, notifications and security.","ve","admin"],"reports":["Reports","Review picklist, invoice, device, and checker reporting.","v","core"],"day-end":["Day End","Review warehouse day sessions, start and end times, tray counts, and status.","v","core"],audit:["Audit log","Who changed what, when. Failures are highlighted.","vx","core"],syslog:["System log","Errors and failed operations with diagnostic detail.","v","core"],health:["Health & releases","Services, release manifest and site acceptance checks.","v","core"],"outbound-check-lookup":["Checker lookup","Browse Single Invoice assignments, check state and completion status.","va","outbound"],"outbound-picklist-assignment":["Picklist Assignment","Assign available picklists to outbound checkers and review current assignments.","va","outbound"],"outbound-submission":["Submission","Review completed trays, modifications, and submission details.","va","outbound"]};
+const CUST={dashboard:["Dashboard","Your queue, stock health and exceptions.","v","core"],"admin-depts":["Departments","Departments and sub-departments. Each department is a module.","vce","admin"],"admin-perms":["Roles & permissions","Choose which pages are visible for each assignment. Backend authorization is future scope.","vce","admin"],"admin-modules":["Modules","Licensed, installed and enabled are three separate states.","ve","admin"],"admin-settings":["Settings","Site, integrations, notifications and security.","ve","admin"],"reports":["Reports","Review picklist, invoice, device, and checker reporting.","v","core"],"day-end":["Day End","Review warehouse day sessions, start and end times, tray counts, and status.","v","core"],audit:["Audit log","Who changed what, when. Failures are highlighted.","vx","core"],syslog:["System log","Errors and failed operations with diagnostic detail.","v","core"],health:["Health & releases","Services, release manifest and site acceptance checks.","v","core"],"outbound-check-lookup":["Checker lookup","Browse invoiced picklists, assign them to checkers, and review check state and completion status.","va","outbound"]};
 const NAV_ICON={
  dashboard:"grid","inbound-grn":"package","inbound-disc":"clipboard","inventory-stock":"box","inventory-ledger":"clipboard","inventory-putaway":"package","inventory-transfer":"arrow","inventory-count":"check",
- "outbound-orders":"cart","outbound-pick":"clipboard","outbound-check":"shield","outbound-check-lookup":"search","outbound-picklist-assignment":"users","outbound-submission":"check","returns-cases":"truck","returns-inspect":"eye","returns-disp":"check","reports":"chart",
+ "outbound-orders":"cart","outbound-pick":"clipboard","outbound-check":"shield","outbound-check-lookup":"search","returns-cases":"truck","returns-inspect":"eye","returns-disp":"check","reports":"chart",
  "md-product":"box","md-manufacturer":"building","md-device":"scan","md-batch":"package","md-wh":"location","md-tray":"layers","md-checker":"users","admin-users":"users","admin-depts":"building","admin-perms":"shield","admin-modules":"layers","admin-settings":"sliders","day-end":"clock",audit:"clipboard",syslog:"file",health:"chart"
 };
 const PH_ICON={dashboard:"grid","admin-depts":"building","admin-perms":"shield","admin-modules":"layers","admin-settings":"sliders","reports":"chart","day-end":"clock",audit:"clipboard",syslog:"file",health:"chart"};
 const actionIcon=label=>/delete|deactivate|quarantine|block/i.test(label)?"shield":/approve|confirm|resolve|release|post|save|pass|complete|reactivate/i.test(label)?"check":/export|download/i.test(label)?"download":/assign|reassign|user/i.test(label)?"users":/reset|retry/i.test(label)?"refresh":/inspect|view|open/i.test(label)?"eye":/edit|start|record|new|create|update/i.test(label)?"edit":"arrow";
-const DEPT_NAV=[{id:"inbound",name:"Inbound",icon:"download",pages:["inbound-grn","inbound-disc"]},{id:"inventory",name:"Inventory",icon:"box",pages:["inventory-stock","inventory-ledger","inventory-putaway","inventory-transfer","inventory-count"]},{id:"outbound",name:"Outbound",icon:"cart",pages:["outbound-pick","outbound-orders","outbound-picklist-assignment","outbound-check","outbound-check-lookup","outbound-submission"]},{id:"returns",name:"Returns",icon:"truck",pages:["returns-cases","returns-inspect","returns-disp"]},{id:"master-data",name:"Master data",icon:"layers",pages:["md-product","md-batch","md-device","md-checker","md-manufacturer","md-tray"]},{id:"administration",name:"Administration",icon:"shield",pages:["admin-users","admin-depts","admin-perms","admin-modules"]},{id:"monitoring",name:"Monitoring",icon:"chart",pages:["day-end","audit","syslog","health"]}];
+const DEPT_NAV=[{id:"inbound",name:"Inbound",icon:"download",pages:["inbound-grn","inbound-disc"]},{id:"inventory",name:"Inventory",icon:"box",pages:["inventory-stock","inventory-ledger","inventory-putaway","inventory-transfer","inventory-count"]},{id:"outbound",name:"Outbound",icon:"cart",pages:["outbound-pick","outbound-orders","outbound-check","outbound-check-lookup"]},{id:"returns",name:"Returns",icon:"truck",pages:["returns-cases","returns-inspect","returns-disp"]},{id:"master-data",name:"Master data",icon:"layers",pages:["md-product","md-batch","md-device","md-checker","md-manufacturer","md-tray"]},{id:"administration",name:"Administration",icon:"shield",pages:["admin-users","admin-depts","admin-perms","admin-modules"]},{id:"monitoring",name:"Monitoring",icon:"chart",pages:["day-end","audit","syslog","health"]}];
 const NAV_SUBDEPT_IDS=new Set(["inbound","inventory","outbound","returns"]);
 const PAGE_TAB_GROUPS=DEPT_NAV.filter(department=>!NAV_SUBDEPT_IDS.has(department.id)).map(department=>({id:department.id,name:department.name,pages:department.pages}));
-const T=id=>id==="report-home"?"Home":id==="report-picklists"?pluralTerm(ft("groupPicklist")):id==="report-users"?"Checkers Report":id==="report-device"?"Device Reports":id==="report-stations"?"Station Report":id==="admin-users"?termLabel("users"):id==="admin-depts"?termLabel("departments"):id==="admin-perms"?`${termLabel("role")}s & permissions`:id==="md-checker"?"Checker Master":id==="outbound-check-lookup"?`${termLabel("checker")} lookup`:id==="outbound-picklist-assignment"?"Picklist Assignment":id==="outbound-submission"?"Submission":id==="outbound-orders"?ft("groupPicklist"):id==="outbound-pick"?ft("picklist"):pages[id]?pages[id].title:CUST[id][0],MOD=id=>pages[id]?pages[id].mod:CUST[id][3];
+const T=id=>id==="report-home"?"Home":id==="report-picklists"?pluralTerm(ft("groupPicklist")):id==="report-users"?"Checkers Report":id==="report-device"?"Device Reports":id==="report-stations"?"Station Report":id==="admin-users"?termLabel("users"):id==="admin-depts"?termLabel("departments"):id==="admin-perms"?`${termLabel("role")}s & permissions`:id==="md-checker"?"Checker Master":id==="outbound-check-lookup"?`${termLabel("checker")} lookup`:id==="outbound-orders"?ft("groupPicklist"):id==="outbound-pick"?ft("picklist"):pages[id]?pages[id].title:CUST[id][0],MOD=id=>pages[id]?pages[id].mod:CUST[id][3];
 const modOn=m=>!MODS[m]||(MODS[m].ent&&MODS[m].en);
 const canReportPage=id=>{const user=P(),permissions=user.role==="Super Admin"?ROLE_PAGE_ACCESS["All|—|Super Admin"]||{}:assignmentPermissions(user);return(permissions==="*"||(permissions[id]||"").includes("v"))&&modOn("core")};
 const can=id=>{
@@ -1844,7 +1811,7 @@ else if(isMaster)body=`<div class="tw"><table><thead><tr>${masterColumns.map(key
 else body=`<div class="tw"><table><thead><tr>${pg.cols.map((c,i)=>`<th>${esc(fulfillmentText(pg.id==="admin-users"?[ "User ID",termLabel("user"),termLabel("department"),termLabel("subdepartment"),termLabel("role")][i]||lab(c):lab(c)))}</th>`).join("")}${showWarehouse?"<th>Warehouse</th>":""}${showOwn?`<th>${esc(termLabel("employee"))}</th>`:""}<th>Status</th>${importable?"<th>Action</th>":""}</tr></thead><tbody>${shown.map(r=>`<tr class="k ${r.note.startsWith("BLOCK:")||/fail|expired|recalled/i.test(r.st)?"bad":""}" tabindex="0" data-a="open" data-id="${esc(r.id)}">${r.c.map((v,i)=>renderCell(r,i,v)).join("")}${showWarehouse?`<td>${esc(r.wh)}</td>`:""}${showOwn?`<td>${esc(r.who)}</td>`:""}<td>${chip(r.st)}</td>${importable?`<td><div class="device-actions">${hasG(id,"e")?`<button type="button" class="device-icon-action" data-a="${product?"product-edit":"manufacturer-edit"}" data-id="${esc(r.id)}" aria-label="Edit ${esc(product?r.productCode:r.manufacturerId)}" title="Edit ${product?"product":"manufacturer"}">${icon("edit",16)}</button>`:""}${hasG(id,"d")?`<button type="button" class="device-icon-action delete" data-a="${product?"product-delete":"manufacturer-delete"}" data-id="${esc(r.id)}" aria-label="Delete ${esc(product?r.productCode:r.manufacturerId)}" title="Delete ${product?"product":"manufacturer"}">${icon("trash",16)}</button>`:""}</div></td>`:""}</tr>`).join("")}</tbody></table></div>`;
 const btns=(importable&&canCreate?`<button class="btn" data-a="${product?"product-format":"manufacturer-format"}">${icon("download",14)} Download format</button>`:"")+((isMaster?masterCan(id,"x"):hasG(id,"x"))?`<button class="btn" data-a="${product?"product-download":manufacturer?"manufacturer-download":"download-list"}">${icon("download",14)} Download</button>`:"")+(importable&&canCreate?`<button class="btn" data-a="${product?"product-upload":"manufacturer-upload"}">${icon("upload",14)} Upload</button>`:"")+((id==="admin-users"?hasG(id,"c")&&userCreationPolicy().roles.length>0:canCreate)?`<button class="btn p" data-a="new">${icon("plus",14)} New</button>`:"");
 return`${ph(id,btns,!pageHasUtilityToolbar(id))}<section class="card"><div class="tb"><div><input class="ctl" id="q" placeholder="Search ${esc(fulfillmentText(pg.title).toLowerCase())}…" value="${esc(S.q)}"><button class="fc ${S.f?"":"on"}" data-a="flt" data-v="">All ${rows.length}</button>${Object.entries(cnt).map(([k,v])=>`<button class="fc ${S.f===k?"on":""}" data-a="flt" data-v="${esc(k)}">${esc(fulfillmentText(k))} ${v}</button>`).join("")}</div></div>${product?'<input class="hidden" type="file" id="productImport" accept=".csv,text/csv">':manufacturer?'<input class="hidden" type="file" id="manufacturerImport" accept=".csv,text/csv">':""}<div id="tbl">${body}</div></section>${masterColumnDialog()}`}
-const OUTBOUND_PERMISSION="outbound.check.columns.manage",OUTBOUND_SCHEMA_VERSION=2;
+const OUTBOUND_PERMISSION="outbound.check.columns.manage",OUTBOUND_SCHEMA_VERSION=3;
 const OUTBOUND_CATALOGUE=[
 {key:"groupPicklistNumber",label:"Group picklist #",group:"Picklist",locked:"first"},
 {key:"picklistNumber",label:"Picklist #",group:"Picklist"},
@@ -1898,16 +1865,11 @@ const OUTBOUND_CATALOGUE=[
 {key:"rawStatus",label:"API status",group:"System"},
 {key:"rawScan",label:"API scan state",group:"System"},
 {key:"checkerAssignedTo",label:"Assigned To",group:"Checker"},
+{key:"checkerAssign",label:"Assign checker",group:"Checker"},
 {key:"checkerSalesmanCode",label:"Salesman Code",group:"Checker"},
 {key:"checkerPackaging",label:"Packaging",group:"Packaging"},
 {key:"checkerStatus",label:"Status",group:"Status & sync"},
 {key:"checkerComplete",label:"Mark as Complete",group:"Status & sync"},
-{key:"submissionChecker",label:"Checker",group:"Checker"},
-{key:"submissionBusinessDate",label:"Business date",group:"Picklist"},
-{key:"submissionStatus",label:"Status",group:"Status & sync"},
-{key:"submissionSubmittedBy",label:"Submitted by",group:"System"},
-{key:"submissionUpdated",label:"Updated",group:"Timing"},
-{key:"submissionResponse",label:"Response",group:"Status & sync"},
 {key:"action",label:"Action",group:"",locked:"last"}
 ];
 const OUTBOUND_GROUPS=["Picklist","Totals","Checker","Timing","Packaging","Status & sync","System"];
@@ -1916,21 +1878,20 @@ invoiced:["groupPicklistNumber","picklistNumber","relatedInvoices","salesmanCode
 checked:["groupPicklistNumber","picklistNumber","relatedInvoices","salesmanCode","checkerName","endTime","duration","status","action"],
 "pick-scan":["groupPicklistNumber","picklistNumber","floor","godownLocation","salesmanCode","relatedInvoices","picklistTime","status","action"],
 "pick-checked":["groupPicklistNumber","picklistNumber","relatedInvoices","salesmanCode","checkerName","endTime","status","action"],
-"checker-lookup":["groupPicklistNumber","picklistNumber","checkerAssignedTo","checkerSalesmanCode","checkerPackaging","checkerStatus","checkerComplete","action"],
-submission:["groupPicklistNumber","picklistNumber","submissionChecker","submissionBusinessDate","submissionStatus","submissionSubmittedBy","submissionUpdated","submissionResponse","action"]
+"checker-lookup":["groupPicklistNumber","picklistNumber","checkerAssignedTo","checkerSalesmanCode","checkerPackaging","checkerStatus","checkerAssign","checkerComplete","action"]
 };
 const OUTBOUND_TAB_COLUMNS=Object.fromEntries(Object.entries(OUTBOUND_DEFAULTS).map(([tab,columns])=>[tab,new Set(columns)]));
 let outboundPickerOpen=false,outboundColumnSearch="",outboundRelatedOpen="",outboundPickerScrollY=0,outboundBodyLock=null,outboundCheckFilter="all",outboundCheckQuery="",outboundCheckRow=null,outboundCheckRecord=OUTBOUND_CHECK_RECORD,outboundCheckOrigin="outbound-orders",pendingOutboundStart=null,outboundEndPackaging={Cases:0,Box:0,Bag:0,IcePack:0},outboundSplitTargetIndex=-1;
 let outboundPreviewRole="Super Admin",outboundColumnRole="Manager";
-const outboundColumnsTab=()=>S.page==="outbound-pick"?`pick-${S.picking.tab==="checked"?"checked":"scan"}`:S.page==="outbound-check-lookup"?"checker-lookup":S.page==="outbound-submission"?"submission":S.orderInvoice.tab==="checked"?"checked":"invoiced";
-const outboundColumnsPage=()=>["outbound-pick","outbound-check-lookup","outbound-submission"].includes(S.page)?S.page:"outbound-orders";
+const outboundColumnsTab=()=>S.page==="outbound-pick"?`pick-${S.picking.tab==="checked"?"checked":"scan"}`:S.page==="outbound-check-lookup"?"checker-lookup":S.orderInvoice.tab==="checked"?"checked":"invoiced";
+const outboundColumnsPage=()=>["outbound-pick","outbound-check-lookup"].includes(S.page)?S.page:"outbound-orders";
 const outboundViewRole=()=>["Super Admin","Head"].includes(P().role)?outboundPreviewRole:P().role==="Staff"?"Staff":"Manager";
 const outboundCanManageRows=()=>outboundViewRole()!=="Staff";
 const outboundCanStartRows=()=>outboundCanManageRows()||outboundViewRole()==="Staff"&&(P().dept==="Outbound"||["Super Admin","Head"].includes(P().role));
 const outboundPreviewControls=()=>["Super Admin","Head"].includes(P().role)?`<label class="outbound-view-select-wrap"><span>View as</span><select class="outbound-view-select" data-a="outbound-view-role" aria-label="Choose outbound view">${(P().role==="Super Admin"?["Super Admin","Manager","Staff"]:["Manager","Staff"]).map(role=>`<option value="${role}" ${outboundViewRole()===role?"selected":""}>${role} View</option>`).join("")}</select></label>`:"";
 const outboundPageControls=canCustomize=>{const preview=outboundPreviewControls(),columns=canCustomize?`<button type="button" class="btn outbound-columns-button" data-a="outbound-columns-toggle" aria-expanded="${outboundPickerOpen}" aria-controls="outboundColumnPopover">${icon("sliders",15)} Edit Columns</button>`:"";return preview||columns?`<div class="view-columns-toolbar">${preview}${columns}</div>`:""};
-const pageUtilityToolbar=id=>{const controls=MASTER_COLUMN_DEFS[id]?masterViewControls(id):["outbound-orders","outbound-pick","outbound-check-lookup","outbound-submission"].includes(id)?outboundPageControls(hasPermission(OUTBOUND_PERMISSION)):"";return controls?`<div class="page-utility-toolbar">${controls}${refreshButton}</div>`:""};
-const pageHasUtilityToolbar=id=>Boolean(MASTER_COLUMN_DEFS[id]&&P().role==="Super Admin"||["outbound-orders","outbound-pick","outbound-check-lookup","outbound-submission"].includes(id)&&(["Super Admin","Head"].includes(P().role)||hasPermission(OUTBOUND_PERMISSION)));
+const pageUtilityToolbar=id=>{const controls=MASTER_COLUMN_DEFS[id]?masterViewControls(id):["outbound-orders","outbound-pick","outbound-check-lookup"].includes(id)?outboundPageControls(hasPermission(OUTBOUND_PERMISSION)):"";return controls?`<div class="page-utility-toolbar">${controls}${refreshButton}</div>`:""};
+const pageHasUtilityToolbar=id=>Boolean(MASTER_COLUMN_DEFS[id]&&P().role==="Super Admin"||["outbound-orders","outbound-pick","outbound-check-lookup"].includes(id)&&(["Super Admin","Head"].includes(P().role)||hasPermission(OUTBOUND_PERMISSION)));
 const outboundStorageKey=(tab,role=outboundViewRole())=>`wmsOutboundColumns:v${OUTBOUND_SCHEMA_VERSION}:${role}:${tab}`;
 const defaultOutboundColumns=(tab,role=outboundViewRole())=>OUTBOUND_DEFAULTS[tab].filter(key=>role!=="Staff"||key!=="action"||outboundCanStartRows());
 function getOutboundColumns(tab,role=outboundViewRole()){
@@ -2066,7 +2027,7 @@ if(!row){toast("This picklist is no longer available.");return}
 if(outboundDisplayState(row).key!=="action-required"){toast("This picklist is no longer awaiting approval.");return}
 if("scanState"in row)row.scanState="SCANNED";else row.scan="SCANNED";
 row.status="COMPLETED";row.completed=true;row.apiStatus="SYNCED";row.endTime=new Date().toISOString();
-if(kind==="group"){row.started=true;row.message=null;row.submissionStatus="submitted";row.submittedBy=P().userId;row.submissionTime=row.endTime;row.submissionResponse="Marked as complete."}
+if(kind==="group"){row.started=true;row.message=null}
 else row.remarks="";
 const picklistNumber=outboundSource(row,"picklistNumber","picklist");
 aud.unshift({t:"Now",d:0,actor:P().name,action:"Mark picklist complete",rec:picklistNumber,mod:"outbound",out:"Success",msg:"Awaiting approval → Checked."});
@@ -2354,7 +2315,7 @@ setSidebarCollapsed(true);window.scrollTo(0,0);$("#app").classList.remove("o");s
 }
 function closeOutboundCheck(){
 if(!outboundCheckRow)return;
-const origin=outboundCheckOrigin,inProgress=outboundDisplayState(outboundCheckRow).key==="in-progress";outboundCheckRow=null;outboundCheckRecord=OUTBOUND_CHECK_RECORD;outboundCheckOrigin="outbound-orders";$("#c").classList.remove("outbound-check-full-page");if(origin==="outbound-submission"){show("outbound-submission",1);return}if(origin==="outbound-pick"){S.picking.tab=inProgress?"scan":"checked";S.picking.filter="all";S.picking.page=1;show("outbound-pick",1);return}if(origin==="checker-lookup"){show("outbound-check-lookup",1);return}S.orderInvoice.tab=inProgress?"invoiced":"checked";S.orderInvoice.filter="all";show("outbound-orders",1);
+const origin=outboundCheckOrigin,inProgress=outboundDisplayState(outboundCheckRow).key==="in-progress";outboundCheckRow=null;outboundCheckRecord=OUTBOUND_CHECK_RECORD;outboundCheckOrigin="outbound-orders";$("#c").classList.remove("outbound-check-full-page");if(origin==="outbound-pick"){S.picking.tab=inProgress?"scan":"checked";S.picking.filter="all";S.picking.page=1;show("outbound-pick",1);return}if(origin==="checker-lookup"){show("outbound-check-lookup",1);return}S.orderInvoice.tab=inProgress?"invoiced":"checked";S.orderInvoice.filter="all";show("outbound-orders",1);
 }
 function outboundColumnDialog(tab){
 if(!outboundPickerOpen||!hasPermission(OUTBOUND_PERMISSION))return"";
@@ -2407,37 +2368,16 @@ const state=outboundDisplayState(row);
 if(state.key==="action-required")return"awaiting-approval";
 if(state.key==="checked")return"completed";
 if(state.key==="in-progress")return"assigned";
+if(state.key==="not-started"&&(row.assignedTo||row.checkerName))return"assigned";
 if(state.key==="not-started")return"invoiced";
 const status=String(row.status||"").toUpperCase();
-return status==="COMPLETED"||status==="CHECKED"?"completed":status==="STARTED"?"assigned":status==="INVOICED"?"invoiced":"awaiting-approval";
+return status==="COMPLETED"||status==="CHECKED"?"completed":status==="STARTED"||status==="ASSIGNED"?"assigned":status==="INVOICED"?"invoiced":"awaiting-approval";
 };
 const checkerStatusLabel=status=>({"awaiting-approval":"Awaiting Approval",assigned:"Assigned",invoiced:"Invoiced",completed:"Completed"}[status]||status);
 const checkerStatusTone=status=>status==="awaiting-approval"?"warning":status==="completed"?"success":status==="assigned"?"info":"neutral";
-const submissionStatusLabel=status=>({pending:"Awaiting approval",queued:"Queued",processing:"Processing",submitted:"Submitted",error:"Error"}[status]||"Not submitted");
-const submissionStatusTone=status=>({pending:"warning",queued:"info",processing:"info",submitted:"success",error:"danger"}[status]||"neutral");
-function picklistAssignmentPage(){
-const state=S.picklistAssignment,checkerUsers=ASG.filter(user=>user.status==="Active"&&user.role==="Staff"&&user.dept==="Outbound"&&(["Super Admin","Head"].includes(P().role)||P().role!=="Manager"||P().sub==="All"||user.sub===P().sub));
-if(!checkerUsers.some(user=>user.userId===state.checkerId))state.checkerId="";
-const dateRows=PICKLIST_ASSIGNMENT_ROWS.filter(row=>!state.date||row.picklistDate?.slice(0,10)===state.date);
-const isAvailable=row=>row.scan==="NEW"&&!row.checkerId,isAssigned=row=>row.scan==="NEW"&&Boolean(row.checkerId);
-const counts={all:dateRows.length,available:dateRows.filter(isAvailable).length,assigned:dateRows.filter(isAssigned).length,inProgress:dateRows.filter(row=>row.scan==="IN-PROGRESS").length,completed:dateRows.filter(row=>["SCANNED","SCANNED-ERROR"].includes(row.scan)).length};
-const query=state.query.trim().toLowerCase(),filtered=dateRows.filter(row=>{
-const matchesFilter=state.filter==="all"||state.filter==="available"&&isAvailable(row)||state.filter==="assigned"&&isAssigned(row)||state.filter==="in-progress"&&row.scan==="IN-PROGRESS"||state.filter==="completed"&&["SCANNED","SCANNED-ERROR"].includes(row.scan);
-return matchesFilter&&(!query||[row.groupPicklistNumber,row.picklistNumber,row.relatedInvoices,row.salesmanCode,row.checkerName,row.godownLocation,row.floor].filter(Boolean).join(" ").toLowerCase().includes(query));
-});
-const pageSize=10,pageCount=Math.max(1,Math.ceil(filtered.length/pageSize));state.page=Math.min(state.page,pageCount);
-const offset=(state.page-1)*pageSize,rows=filtered.slice(offset,offset+pageSize),canAssign=can("outbound-picklist-assignment")&&hasG("outbound-picklist-assignment","a");
-const filters=[["all","All"],["available","Available"],["assigned","Assigned"],["in-progress","In progress"],["completed","Completed"]];
-const checkerOptions=checkerUsers.map(user=>`<option value="${esc(user.userId)}" ${state.checkerId===user.userId?"selected":""}>${esc(user.name)} · ${esc(subdepartmentLabel(user.dept,user.sub))}</option>`).join("");
-return`${ph("outbound-picklist-assignment","",!pageHasUtilityToolbar("outbound-picklist-assignment"))}<div class="banner">Choose an active outbound checker, then assign or reassign a picklist. This standalone mockup updates sample data for this browser session; it does not call the live API.</div>
-<div class="invoice-overview picklist-assignment-overview"><h2>Assignment overview</h2>${[["Picklists",counts.all,"layers"],["Available",counts.available,"clipboard"],["Assigned",counts.assigned,"users"],["In progress",counts.inProgress,"clock"],["Completed",counts.completed,"check"]].map(([label,value,ico])=>`<div class="invoice-stat"><div><small>${esc(label)}</small><b>${Number(value).toLocaleString("en-US")}</b></div><span class="metric-icon">${icon(ico,19)}</span></div>`).join("")}</div>
-<section class="card"><div class="invoice-toolbar outbound-toolbar"><div class="invoice-tabs" role="group" aria-label="Filter picklist assignments">${filters.map(([key,label])=>`<button type="button" class="btn ${state.filter===key?"on":""}" data-a="picklist-assignment-filter" data-v="${key}" aria-pressed="${state.filter===key}">${label} · ${counts[key==="in-progress"?"inProgress":key]??0}</button>`).join("")}</div>
-<div class="invoice-toolbar-group"><label class="field"><span>Assign to</span><select class="ctl" id="picklistAssignmentChecker" ${checkerUsers.length?"":"disabled"}><option value="">Select checker</option>${checkerOptions}</select></label><label class="field"><span>Picklist date</span><input class="ctl" type="date" id="picklistAssignmentDate" value="${esc(state.date)}"></label><label class="invoice-search">${icon("search",15)}<input class="ctl" id="picklistAssignmentSearch" placeholder="Search picklist, group, invoice…" value="${esc(state.query)}" aria-label="Search picklist assignments"></label></div></div>
-${rows.length?`<div class="outbound-table-wrap" role="region" aria-label="Picklist assignments table" tabindex="0"><table class="outbound-table"><thead><tr><th>Group picklist</th><th>Picklist</th><th>Floor / Godown</th><th>Salesman</th><th>Invoice</th><th>Assigned checker</th><th>Status</th><th>Assignment</th></tr></thead><tbody>${rows.map(row=>{const assigned=row.checkerName||"—",status=row.scan==="IN-PROGRESS"?"In progress":row.scan==="SCANNED"?"Completed":row.scan==="SCANNED-ERROR"?"Needs review":row.checkerId?"Assigned":"Available",actionable=row.scan==="NEW",sameChecker=row.checkerId===state.checkerId;return`<tr><td class="id">${esc(row.groupPicklistNumber)}</td><td>${esc(row.picklistNumber)}</td><td>${esc(row.floor)} / ${esc(row.godownLocation)}</td><td>${esc(row.salesmanCode)}</td><td>${esc(row.relatedInvoices)}</td><td>${esc(assigned)}</td><td>${chip(status)}</td><td>${canAssign&&actionable?`<button type="button" class="btn ${row.checkerId?"":"p"}" data-a="picklist-assignment-assign" data-id="${esc(row.groupPicklistNumber)}" ${!state.checkerId||sameChecker?"disabled":""}>${sameChecker?"Assigned":row.checkerId?"Reassign":"Assign"}</button>`:"—"}</td></tr>`}).join("")}</tbody></table></div>`:`<div class="empty"><b>No matching picklists</b>Try another date or adjust the search and status filter.</div>`}
-<div class="invoice-pagination"><span style="color:var(--muted-foreground);font-size:12px">Showing ${filtered.length?offset+1:0}–${Math.min(offset+pageSize,filtered.length)} of ${filtered.length}</span><div><button class="btn" data-a="picklist-assignment-page" data-page="${state.page-1}" ${state.page<=1?"disabled":""}>« Previous</button><button class="btn p" aria-current="page" disabled>${state.page}</button><button class="btn" data-a="picklist-assignment-page" data-page="${state.page+1}" ${state.page>=pageCount?"disabled":""}>Next »</button></div></div></section>`;
-}
 function checkerLookupPage(){
-const state=S.checkerLookup;
+const state=S.checkerLookup,checkerUsers=ASG.filter(user=>user.status==="Active"&&user.role==="Staff"&&user.dept==="Outbound"&&(["Super Admin","Head"].includes(P().role)||P().role!=="Manager"||P().sub==="All"||user.sub===P().sub));
+if(!checkerUsers.some(user=>user.userId===state.assignCheckerId))state.assignCheckerId="";
 const query=state.query.trim().toLowerCase(),all=ORDER_INVOICES.filter(row=>row.vdt===state.date),statuses=["invoiced","assigned","awaiting-approval","completed"];
 const checkers=[...new Set(all.map(row=>row.assignedTo||row.checkerName).filter(Boolean))].sort();
 const filtered=all.filter(row=>(state.status==="all"||checkerStatusFor(row)===state.status)&&(state.checker==="all"||(row.assignedTo||row.checkerName)===state.checker)&&(!query||[row.group,row.picklist,row.invoices,row.salesman,row.assignedTo,row.checkerName,row.checkerId,row.deviceId].filter(Boolean).join(" ").toLowerCase().includes(query)));
@@ -2445,11 +2385,14 @@ const pageSize=10,pageCount=Math.max(1,Math.ceil(filtered.length/pageSize));stat
 const offset=(state.page-1)*pageSize,rows=filtered.slice(offset,offset+pageSize),counts=Object.fromEntries(statuses.map(status=>[status,all.filter(row=>checkerStatusFor(row)===status).length]));
 const packaging=row=>[["case",row.packagingCasesCount],["box",row.packagingBoxCount],["bag",row.packagingBagCount],["ice pack",row.packagingIcePackCount]].filter(([,count])=>Number(count)>0).map(([label,count])=>`${count} ${label}${count===1?"":label==="box"?"es":"s"}`).join(", ")||"—";
 const canMarkComplete=row=>checkerStatusFor(row)==="awaiting-approval"&&hasG("outbound-check-lookup","a")&&["Super Admin","Head","Manager"].includes(P().role);
+const canAssign=can("outbound-check-lookup")&&hasG("outbound-check-lookup","a");
+const checkerOptions=checkerUsers.map(user=>`<option value="${esc(user.userId)}" ${state.assignCheckerId===user.userId?"selected":""}>${esc(user.name)} · ${esc(subdepartmentLabel(user.dept,user.sub))}</option>`).join("");
 const columns=getOutboundColumns("checker-lookup"),cell=(row,key)=>{
 const status=checkerStatusFor(row),assignee=row.assignedTo||row.checkerName;
 if(key==="groupPicklistNumber")return`<td class="id">${esc(row.group)}</td>`;
 if(key==="picklistNumber")return`<td>${esc(row.picklist)}</td>`;
 if(key==="checkerAssignedTo")return`<td>${assignee?checkerIdentity(assignee,checkerSourceFor(row)):"—"}</td>`;
+if(key==="checkerAssign"){const eligible=["invoiced","assigned"].includes(status),sameChecker=row.checkerId===state.assignCheckerId;return`<td>${canAssign&&eligible?`<button type="button" class="btn ${assignee?"":"p"} s" data-a="checker-lookup-assign" data-id="${esc(row.id)}" ${!state.assignCheckerId||sameChecker?"disabled":""}>${sameChecker?"Assigned":assignee?"Reassign":"Assign"}</button>`:"—"}</td>`}
 if(key==="checkerSalesmanCode")return`<td>${esc(row.salesman||"—")}</td>`;
 if(key==="checkerPackaging")return`<td>${esc(packaging(row))}</td>`;
 if(key==="checkerStatus")return`<td>${chip(checkerStatusLabel(status),checkerStatusTone(status))}</td>`;
@@ -2457,46 +2400,9 @@ if(key==="checkerComplete")return`<td>${canMarkComplete(row)?`<button type="butt
 return`<td><button type="button" class="btn s" data-a="checker-lookup-view" data-id="${esc(row.id)}">${icon("eye",13)} View</button></td>`;
 };
 return`${ph("outbound-check-lookup","",!pageHasUtilityToolbar("outbound-check-lookup"))}<div class="invoice-overview"><h2>${esc(termLabel("checker"))} lookup</h2>${[["Assigned",counts.assigned,"users"],["Awaiting Approval",counts["awaiting-approval"],"clock"],["Invoiced",counts.invoiced,"file"],["Completed",counts.completed,"check"]].map(([label,value,ico])=>`<div class="invoice-stat"><div><small>${esc(label)}</small><b>${value}</b></div><span class="metric-icon">${icon(ico,19)}</span></div>`).join("")}</div>
-<section class="card"><div class="tb checker-lookup-toolbar"><div class="checker-lookup-filters"><label class="field checker-lookup-date" style="margin:0"><span style="font-size:11px">Business date</span><input class="ctl" type="date" data-a="checker-lookup-date" value="${esc(state.date)}"></label><label class="invoice-search checker-lookup-search">${icon("search",15)}<input id="checkerLookupSearch" class="ctl" placeholder="Search anything shown in the table…" value="${esc(state.query)}" aria-label="Search checker lookup"></label></div><div class="checker-lookup-actions"><select class="ctl" style="width:auto;min-width:160px" data-a="checker-lookup-status" aria-label="Filter by status"><option value="all" ${state.status==="all"?"selected":""}>All Statuses</option>${statuses.map(status=>`<option value="${status}" ${state.status===status?"selected":""}>${checkerStatusLabel(status)}</option>`).join("")}</select><select class="ctl" style="width:auto;min-width:160px" data-a="checker-lookup-checker" aria-label="Filter by ${esc(termLabel("checker"))}"><option value="all">All ${esc(pluralTerm(termLabel("checker")))}</option>${checkers.map(name=>`<option value="${esc(name)}" ${state.checker===name?"selected":""}>${esc(name)}</option>`).join("")}</select><button class="btn" type="button" data-a="checker-lookup-refresh">${icon("refresh",14)} Refresh</button></div></div>
+<section class="card"><div class="tb checker-lookup-toolbar"><div class="checker-lookup-filters"><label class="field checker-lookup-date" style="margin:0"><span style="font-size:11px">Business date</span><input class="ctl" type="date" data-a="checker-lookup-date" value="${esc(state.date)}"></label><label class="invoice-search checker-lookup-search">${icon("search",15)}<input id="checkerLookupSearch" class="ctl" placeholder="Search anything shown in the table…" value="${esc(state.query)}" aria-label="Search checker lookup"></label></div><div class="checker-lookup-actions"><select class="ctl" style="width:auto;min-width:160px" data-a="checker-lookup-status" aria-label="Filter by status"><option value="all" ${state.status==="all"?"selected":""}>All Statuses</option>${statuses.map(status=>`<option value="${status}" ${state.status===status?"selected":""}>${checkerStatusLabel(status)}</option>`).join("")}</select><select class="ctl" style="width:auto;min-width:160px" data-a="checker-lookup-checker" aria-label="Filter by ${esc(termLabel("checker"))}"><option value="all" ${state.checker==="all"?"selected":""}>All ${esc(pluralTerm(termLabel("checker")))}</option>${checkers.map(name=>`<option value="${esc(name)}" ${state.checker===name?"selected":""}>${esc(name)}</option>`).join("")}</select>${canAssign?`<select class="ctl" style="width:auto;min-width:180px" id="checkerLookupAssignTo" aria-label="Select checker to assign invoiced picklists"><option value="">Assign to checker</option>${checkerOptions}</select>`:""}<button class="btn" type="button" data-a="checker-lookup-refresh">${icon("refresh",14)} Refresh</button></div></div>
 ${rows.length?`<div class="tw"><table><thead><tr>${columns.map(key=>`<th scope="col" data-column-key="${key}">${esc(key==="groupPicklistNumber"?ft("groupPicklist"):key==="picklistNumber"?ft("picklist"):key==="action"?"Actions":outboundColumn(key)?.label||key)}${["groupPicklistNumber","picklistNumber"].includes(key)?" #":""}</th>`).join("")}</tr></thead><tbody>${rows.map(row=>`<tr>${columns.map(key=>cell(row,key)).join("")}</tr>`).join("")}</tbody></table></div>`:`<div class="empty"><b>No checker records found</b>Try another date or clear the search and filters.</div>`}
 <div class="invoice-pagination"><span style="color:var(--muted-foreground);font-size:12px">Showing ${filtered.length?offset+1:0}–${Math.min(offset+pageSize,filtered.length)} of ${filtered.length}</span><div><button class="btn" data-a="checker-lookup-page" data-page="${state.page-1}" ${state.page<=1?"disabled":""}>« Previous</button><button class="btn p" aria-current="page" disabled>${state.page}</button><button class="btn" data-a="checker-lookup-page" data-page="${state.page+1}" ${state.page>=pageCount?"disabled":""}>Next »</button></div></div></section>`
-}
-const SUBMISSION_TRAYS=[
-{id:"tray-1367",tray:"1367",date:"2026-10-31",group:"1123204",checker:"Sathiya B",route:"ROUTE 10-KAVERIPAKKAM",remarks:"Record is with modifications"},
-{id:"tray-1355",tray:"1355",date:"2026-10-31",group:"1123199",checker:"DEVI PRIYANKA V",route:"ROUTE 8-MUDICHUR ROAD",remarks:"Record is with modifications"},
-{id:"tray-1354",tray:"1354",date:"2026-10-31",group:"1123214",checker:"Siva",route:"ROUTE 6-BRINDHAVAN NAGAR PHARMACY",remarks:"Record is with modifications"},
-{id:"tray-1342",tray:"1342",date:"2026-10-31",group:"1123200",checker:"SUBASH R",route:"ROUTE 6-IYYAPANTHANGAL",remarks:"Record is with modifications"},
-{id:"tray-1348",tray:"1348",date:"2026-10-31",group:"1123217",checker:"Pravin Kumar (CHECKING)",route:"ROUTE 10-KAVERIPAKKAM",remarks:"Record is with modifications"},
-{id:"tray-1344",tray:"1344",date:"2026-10-31",group:"1123221",checker:"SATHYAKUMAR",route:"ROUTE 8-MUDICHUR ROAD",remarks:"Record is with modifications"},
-{id:"tray-1333",tray:"1333",date:"2026-10-31",group:"1123185",checker:"Chandrasekar A",route:"ROUTE 6-BRINDHAVAN NAGAR PHARMACY",remarks:"Record is with modifications"},
-{id:"tray-1332",tray:"1332",date:"2026-10-31",group:"1123162",checker:"K KIRTHIGA",route:"ROUTE 6-IYYAPANTHANGAL",remarks:"Record is with modifications"},
-{id:"tray-1335",tray:"1335",date:"2026-10-31",group:"1123187",checker:"E.Jack Antony (Receiving)",route:"ROUTE 10-KAVERIPAKKAM",remarks:"Record is with modifications"},
-{id:"tray-1334",tray:"1334",date:"2026-10-31",group:"1123189",checker:"Aruljayaraj Lurduraj",route:"ROUTE 8-MUDICHUR ROAD",remarks:"Record is with modifications"}
-];
-function submissionPage(){
-const state=S.submission,query=state.query.trim().toLowerCase(),all=SUBMISSION_TRAYS,modified=all.filter(row=>row.remarks),unmodified=all.filter(row=>!row.remarks);
-const source=state.filter==="modified"?modified:state.filter==="unmodified"?unmodified:all,filtered=source.filter(row=>[row.tray,row.group,row.checker,row.route,row.remarks].join(" ").toLowerCase().includes(query));
-const tabs=[["modified","With Modifications",modified.length],["unmodified","No Modifications",unmodified.length]];
-return`${ph("outbound-submission","",false)}<section class="card">
-<div class="submission-toolbar"><div class="invoice-tabs" role="group" aria-label="Filter trays by modifications">${tabs.map(([key,label,count])=>`<button class="btn ${state.filter===key?"on":""}" type="button" data-a="submission-filter" data-v="${key}" aria-pressed="${state.filter===key}">${esc(label)} <b>${count}</b></button>`).join("")}</div><div class="invoice-toolbar-group"><span class="submission-total">${all.length} Trays</span><label class="invoice-search submission-search">${icon("search",15)}<input id="submissionSearch" class="ctl" placeholder="Search tray number or route…" value="${esc(state.query)}" aria-label="Search tray number or route"></label></div></div>
-${filtered.length?`<div class="tw"><table class="submission-table"><thead><tr><th scope="col">Tray No</th><th scope="col">Completed Date</th><th scope="col">${esc(ft("groupPicklist"))} Number</th><th scope="col">${esc(termLabel("checker"))}</th><th scope="col">Remarks / Errors</th><th scope="col">Action</th></tr></thead><tbody>${filtered.map(row=>`<tr><td class="submission-tray-number">${esc(row.tray)}</td><td>${esc(row.date)}</td><td>${esc(row.group)}</td><td>${esc(row.checker)}</td><td>${row.remarks?`<span class="submission-modification">${esc(row.remarks)}</span>`:"—"}</td><td><button type="button" class="btn submission-action" data-a="submission-view" data-id="${esc(row.id)}">View</button></td></tr>`).join("")}</tbody></table></div>`:`<div class="submission-empty"><b>No trays found</b><div>Try another modification filter or search term.</div></div>`}
-</section>`
-}
-function openSubmissionTray(row){
-const record={...OUTBOUND_CHECK_RECORD,items:OUTBOUND_CHECK_RECORD.items.map(item=>{const copy=Object.assign(item.slice(),item);if(Array.isArray(item[11]))copy[11]=[...item[11]];if(Array.isArray(item.splitItems))copy.splitItems=item.splitItems.map(child=>Array.isArray(child)?[...child]:{...child});return copy})};
-const counts=outboundCheckCounts(record);
-Object.assign(record,{groupPicklistNumber:row.group,picklistNumber:row.tray,salesmanCode:row.checker,picklistTime:`${row.date}T00:00:00.000Z`,relatedInvoice:row.tray,relatedInvoices:row.tray,apiStatus:"Complete",deviceStatus:"Complete",showInvoiceNumber:false,summaryLabel:"Tray",summaryValue:row.tray,itemType:"tray",pageTitle:"Tray submission",backLabel:"Back to submissions",summaryStats:[["Tray number",row.tray],["Completed date",row.date],[`${ft("groupPicklist")} number`,row.group],[termLabel("checker"),row.checker],["Route",row.route],["Line items",counts.all],["Quantity",`${counts.scannedQuantity}/${counts.quantity}`],["Completion status","Completed"],["Remarks / errors",row.remarks||"No modifications"]]});
-const checkRow={id:row.id,group:row.group,picklist:row.tray,invoices:row.tray,salesman:row.checker,status:"CHECKED",rawStatus:"CHECKED",scan:"SCANNED",completed:true};
-openOutboundCheck(checkRow,record,"outbound-submission");
-}
-function submitOutboundForCompletion(id){
-if(!hasG("outbound-submission","a")){toast("You do not have permission to submit this picklist.","error");return}
-const row=ORDER_INVOICES.find(item=>item.id===id);
-if(!row||outboundDisplayState(row).key!=="action-required"||!["pending","error"].includes(row.submissionStatus)){toast("This picklist is no longer awaiting submission.");return}
-row.submissionStatus="queued";row.submittedBy=P().userId;row.submissionTime=new Date().toISOString();row.submissionResponse="Queued for processing.";
-row.status="CHECKED";row.completed=true;row.scanState="SCANNED";
-aud.unshift({t:"Now",d:0,actor:P().name,action:"Submit picklist for completion",rec:row.group,mod:"outbound",out:"Success",msg:"Auto-submitter queue accepted the completion request."});
-show(S.page,1);toast(`Picklist ${row.picklist} queued for submission.`);
 }
 function pickingPage(){
 const state=S.picking,all=PICKLISTS,query=state.query.trim().toLowerCase(),tabKey=state.tab==="checked"?"checked":"scan",columns=getOutboundColumns(`pick-${tabKey}`);
@@ -3117,9 +3023,9 @@ function nav(){
 }
 function show(id,keep){if(outboundCheckRow){outboundCheckRow=null;outboundCheckRecord=OUTBOUND_CHECK_RECORD;outboundCheckOrigin="outbound-orders";$("#c").classList.remove("outbound-check-full-page")}if(!keep){S.q="";S.f="";S.lg={q:"",mod:"",lvl:"",fail:0}}if(id==="reports"&&!can(reportPermissionId(S.reports.mode))){const fallback=REPORT_PERMISSION_PAGES.find(([pageId])=>can(pageId));if(fallback)S.reports.mode=fallback[1]}S.page=id;nav();const p=P();let h;
 if(!can(id)){const off=hasG(id,"v")&&!modOn(MOD(id));h=`${ph(id)}<section class="card"><div class="empty e"><b>${off?"This module is turned off":"403 · No access to this page"}</b>${off?"Ask a Super Admin to enable it in Modules.":`Your assignment (${esc(departmentLabel(p.dept))} · ${esc(p.sub==="—"?"—":subdepartmentLabel(p.dept,p.sub))} · ${esc(roleLabel(p.role))}) doesn’t include “${esc(T(id))}”. This route is hidden in the mockup; backend authorization is future scope.`}<div style="margin-top:14px"><button class="btn p" data-a="go" data-v="${home()}">Go to my workspace</button></div></div></section>`}
-else h=id==="outbound-check-lookup"?checkerLookupPage():id==="outbound-picklist-assignment"?picklistAssignmentPage():id==="outbound-submission"?submissionPage():pages[id]?(id==="md-tray"?trayMasterPage():id==="md-device"?deviceMasterPage():id==="md-batch"?batchMasterPage():id==="outbound-orders"?orderInvoicePage():id==="outbound-pick"?pickingPage():listPage(id)):id==="dashboard"?dashboard():id==="admin-depts"?deptPage():id==="admin-perms"?permPage():id==="admin-modules"?modPage():id==="admin-settings"?setPage():id==="reports"?reportsPage():id==="day-end"?dayEndPage():id==="audit"?logsPage("audit"):id==="syslog"?logsPage("syslog"):hp();
+else h=id==="outbound-check-lookup"?checkerLookupPage():pages[id]?(id==="md-tray"?trayMasterPage():id==="md-device"?deviceMasterPage():id==="md-batch"?batchMasterPage():id==="outbound-orders"?orderInvoicePage():id==="outbound-pick"?pickingPage():listPage(id)):id==="dashboard"?dashboard():id==="admin-depts"?deptPage():id==="admin-perms"?permPage():id==="admin-modules"?modPage():id==="admin-settings"?setPage():id==="reports"?reportsPage():id==="day-end"?dayEndPage():id==="audit"?logsPage("audit"):id==="syslog"?logsPage("syslog"):hp();
 const tabGroup=PAGE_TAB_GROUPS.find(group=>group.pages.includes(id)),tabs=tabGroup?`<nav class="dept-tabs" role="tablist" aria-label="${esc(departmentLabel(tabGroup.name))} pages">${tabGroup.pages.filter(can).map(pageId=>`<button type="button" role="tab" aria-selected="${pageId===id}" class="${pageId===id?"on":""}" data-a="go" data-v="${pageId}">${esc(T(pageId))}</button>`).join("")}</nav>`:"";
-$("#c").innerHTML=(p.role==="Super Admin"?"":`<div class="banner">Viewing as <b>${esc(p.name)}</b> · ${esc(roleLabel(p.role))} · ${p.dept==="All"?"All departments":esc(departmentLabel(p.dept))+" → "+esc(p.sub==="—"?"—":subdepartmentLabel(p.dept,p.sub))}. Menu, records and actions follow this assignment.</div>`)+(id==="outbound-submission"?"":pageUtilityToolbar(id))+tabs+h;if(id==="reports")enhanceReportPicklistTerms();if(!outboundPickerOpen)window.scrollTo(0,0);$("#app").classList.remove("o");$("#mn").setAttribute("aria-expanded","false");syncOutboundColumnPortal();enhanceA11y()}
+$("#c").innerHTML=(p.role==="Super Admin"?"":`<div class="banner">Viewing as <b>${esc(p.name)}</b> · ${esc(roleLabel(p.role))} · ${p.dept==="All"?"All departments":esc(departmentLabel(p.dept))+" → "+esc(p.sub==="—"?"—":subdepartmentLabel(p.dept,p.sub))}. Menu, records and actions follow this assignment.</div>`)+pageUtilityToolbar(id)+tabs+h;if(id==="reports")enhanceReportPicklistTerms();if(!outboundPickerOpen)window.scrollTo(0,0);$("#app").classList.remove("o");$("#mn").setAttribute("aria-expanded","false");syncOutboundColumnPortal();enhanceA11y()}
 function enhanceReportPicklistTerms(){
 const root=$("#c");
 root.querySelectorAll(".report-group-search input").forEach(input=>{input.placeholder=fulfillmentText("Search group picklist, invoice, or device…");input.setAttribute("aria-label",fulfillmentText("Search group picklists"))});
@@ -3205,12 +3111,12 @@ const ACTION_RULES={
 "manufacturer-download":()=>masterCan("md-manufacturer","x"),"manufacturer-format":()=>masterCan("md-manufacturer","c"),"manufacturer-upload":()=>masterCan("md-manufacturer","c"),
 "batch-download":()=>masterCan("md-batch","x"),"batch-format":()=>masterCan("md-batch","c"),"batch-upload":()=>masterCan("md-batch","c"),
 "pick-download":()=>hasG("outbound-pick","x"),"pick-format":()=>hasG("outbound-pick","c"),"pick-upload":()=>hasG("outbound-pick","c"),
-"picklist-assignment-assign":()=>can("outbound-picklist-assignment")&&hasG("outbound-picklist-assignment","a"),
+"checker-lookup-assign":()=>can("outbound-check-lookup")&&hasG("outbound-check-lookup","a"),
 "pick-barcode":()=>outboundCanStartRows(),"invoice-barcode":()=>outboundCanStartRows(),
 "download-list":()=>hasG(S.page,"x"),
 "report-export":()=>S.page==="reports"&&can(reportPermissionId(S.reports.mode)),"report-schedule":()=>S.page==="reports"&&can(reportPermissionId(S.reports.mode)),
 "invoice-start":()=>outboundCanStartRows(),"pick-start":()=>outboundCanStartRows(),"outbound-check-scan":()=>outboundCanStartRows(),"outbound-check-end":()=>outboundCanStartRows(),"outbound-check-qty-step":()=>outboundCanStartRows(),"outbound-check-item-ok":()=>outboundCanStartRows(),"outbound-check-edit":()=>outboundCanStartRows(),"outbound-check-delete":()=>outboundCanStartRows(),"outbound-check-undo":()=>outboundCanStartRows(),"outbound-check-end-item-ok":()=>outboundCanStartRows(),"outbound-check-end-qty":()=>outboundCanStartRows(),"outbound-check-end-confirm":()=>outboundCanStartRows(),"outbound-split-add":()=>outboundCanStartRows(),"outbound-split-remove":()=>outboundCanStartRows(),"outbound-split-save":()=>outboundCanStartRows(),
-"outbound-mark-complete":()=>outboundCanManageRows(),"checker-lookup-mark-complete":()=>hasG("outbound-check-lookup","a")&&outboundCanManageRows(),"submission-submit":()=>hasG("outbound-submission","a")
+"outbound-mark-complete":()=>outboundCanManageRows(),"checker-lookup-mark-complete":()=>hasG("outbound-check-lookup","a")&&outboundCanManageRows()
 };
 document.addEventListener("click",e=>{const a=e.target.closest("[data-a]");if(!a)return;const t=a.dataset.a,d=a.dataset;
 const rule=ACTION_RULES[t];if(rule&&!rule()){toast("You do not have permission to do that.","error");return}
@@ -3257,17 +3163,6 @@ else if(t==="pick-format"){downloadTrayCsv("picklist-format.csv",[PICKLIST_API_F
 else if(t==="pick-download"){downloadTrayCsv("picklists.csv",[PICKLIST_API_FIELDS,...PICKLISTS.map(row=>PICKLIST_API_FIELDS.map(field=>row[field]))]);toast("Picklist data downloaded.")}
 else if(t==="terms-save")saveTerminology();
 else if(t==="day-end-page"){S.dayEnd.page=+d.page;show("day-end",1)}
-else if(t==="picklist-assignment-filter"){S.picklistAssignment.filter=d.v;S.picklistAssignment.page=1;show("outbound-picklist-assignment",1)}
-else if(t==="picklist-assignment-page"){S.picklistAssignment.page=Math.max(1,Number(d.page)||1);show("outbound-picklist-assignment",1)}
-else if(t==="picklist-assignment-assign"){
-const state=S.picklistAssignment,checker=ASG.find(user=>user.userId===state.checkerId&&user.status==="Active"&&user.role==="Staff"&&user.dept==="Outbound"&&(["Super Admin","Head"].includes(P().role)||P().role!=="Manager"||P().sub==="All"||user.sub===P().sub)),row=PICKLIST_ASSIGNMENT_ROWS.find(item=>String(item.groupPicklistNumber)===String(d.id));
-if(!can("outbound-picklist-assignment")||!hasG("outbound-picklist-assignment","a")){toast("You do not have permission to assign picklists.","error");return}
-if(!checker){toast("Select an active checker in your outbound assignment scope.","error");return}
-if(!row||row.scan!=="NEW"){toast("This picklist is no longer available for assignment.","error");return}
-PICKLISTS.filter(item=>String(item.groupPicklistNumber)===String(d.id)&&item.scan==="NEW").forEach(item=>{item.checkerId=checker.userId;item.checkerName=checker.name;item.assignedAt=new Date().toISOString();item.status="ASSIGNED"});
-aud.unshift({t:"Now",d:0,actor:P().name,action:row.checkerId?"Picklist reassigned":"Picklist assigned",rec:String(d.id),mod:"outbound",out:"Success",msg:`Picklist ${row.picklistNumber} assigned to ${checker.name}.`});
-state.page=1;show("outbound-picklist-assignment",1);toast(`Picklist ${row.picklistNumber} assigned to ${checker.name}.`);
-}
 else if(t==="report-mode"){if(!REPORT_PERMISSION_PAGES.some(([,mode])=>mode===d.v))return;if(!can(reportPermissionId(d.v))){toast("Your role does not have access to this report.","error");return}S.reports.mode=d.v;show("reports",1);if(tabletSidebar.matches)setSidebarCollapsed(true)}
 else if(t==="report-user-select"){S.reports.userId=d.id;show("reports",1)}
 else if(t==="report-group-page"){S.reports.groupPage=Math.max(1,Number(d.page)||1);show("reports",1)}
@@ -3286,13 +3181,18 @@ else if(t==="outbound-clear-filters"){S.orderInvoice.filter="all";S.orderInvoice
 else if(t==="outbound-retry"){S.orderInvoice.error=null;S.orderInvoice.page=1;show("outbound-orders",1);toast("Outbound view refreshed.")}
 else if(t==="checker-lookup-page"){S.checkerLookup.page=Math.max(1,Number(d.page)||1);show("outbound-check-lookup",1)}
 else if(t==="checker-lookup-refresh"){show("outbound-check-lookup",1);toast("Checker lookup refreshed from the populated mock records.")}
+else if(t==="checker-lookup-assign"){
+const state=S.checkerLookup,checker=ASG.find(user=>user.userId===state.assignCheckerId&&user.status==="Active"&&user.role==="Staff"&&user.dept==="Outbound"&&(["Super Admin","Head"].includes(P().role)||P().role!=="Manager"||P().sub==="All"||user.sub===P().sub)),row=ORDER_INVOICES.find(item=>String(item.id)===String(d.id));
+if(!can("outbound-check-lookup")||!hasG("outbound-check-lookup","a")){toast("You do not have permission to assign picklists.","error");return}
+if(!checker){toast("Select an active checker in your outbound assignment scope.","error");return}
+if(!row||!["invoiced","assigned"].includes(checkerStatusFor(row))){toast("This invoiced picklist is no longer available for assignment.","error");return}
+const wasAssigned=Boolean(row.assignedTo||row.checkerName);
+row.assignedTo=checker.name;row.checkerName=checker.name;row.checkerId=checker.userId;row.checkerSource="Manual";row.assignedAt=new Date().toISOString();
+aud.unshift({t:"Now",d:0,actor:P().name,action:wasAssigned?"Picklist reassigned":"Picklist assigned",rec:String(row.group),mod:"outbound",out:"Success",msg:`Picklist ${row.picklist} assigned to ${checker.name}.`});
+state.page=1;show("outbound-check-lookup",1);toast(`Picklist ${row.picklist} assigned to ${checker.name}.`);
+}
 else if(t==="checker-lookup-view"){const row=checkerLookupPreviewRow();if(row)openOutboundCheck(row,OUTBOUND_CHECK_RECORD,"checker-lookup");else toast("The sample invoice-checking record is unavailable.","error")}
 else if(t==="checker-lookup-mark-complete")markOutboundComplete("group",d.id)
-else if(t==="submission-page"){S.submission.page=Math.max(1,Number(d.page)||1);show("outbound-submission",1)}
-else if(t==="submission-filter"){if(!["modified","unmodified","all"].includes(d.v))return;S.submission.filter=d.v;show("outbound-submission",1)}
-else if(t==="submission-refresh"){show("outbound-submission",1);toast("Submission queue refreshed from the populated mock records.")}
-else if(t==="submission-submit")submitOutboundForCompletion(d.id)
-else if(t==="submission-view"){const row=SUBMISSION_TRAYS.find(item=>item.id===d.id);if(row)openSubmissionTray(row);else toast("This tray is no longer available.","error")}
 else if(t==="outbound-columns-role"){const configurableRoles=P().role==="Super Admin"?["Super Admin","Manager","Staff"]:["Manager","Staff"];if(!hasPermission(OUTBOUND_PERMISSION)||!configurableRoles.includes(d.role))return;outboundColumnRole=d.role;show(outboundColumnsPage(),1);$(`[data-a="outbound-columns-role"][data-role="${d.role}"]`)?.focus()}
 else if(t==="outbound-mark-complete")markOutboundComplete(d.kind,d.id)
 else if(t==="outbound-columns-toggle"){if(!hasPermission(OUTBOUND_PERMISSION))return;outboundRelatedOpen="";outboundPickerOpen=true;const configurableRoles=P().role==="Super Admin"?["Super Admin","Manager","Staff"]:["Manager","Staff"];outboundColumnRole=configurableRoles.includes(outboundViewRole())?outboundViewRole():"Manager";show(outboundColumnsPage(),1);$("#outboundColumnSearch")?.focus()}
@@ -3413,8 +3313,8 @@ const input=e.target,file=input.files[0];input.value="";e.stopImmediatePropagati
 const kind={pickUpload:"Picklist",trayImport:"Tray",productImport:"Product",manufacturerImport:"Manufacturer",batchImport:"Batch"}[input.id],importer={pickUpload:importPicklistCsv,trayImport:importTrayCsv,productImport:importProductCsv,manufacturerImport:importManufacturerCsv,batchImport:importBatchCsv}[input.id];
 importer(file).catch(error=>{console.warn(`Could not import ${kind} CSV.`,error);toast(`Could not import CSV: ${error instanceof Error?error.message:String(error)}`)});
 });
-document.addEventListener("input",e=>{if(e.target.id==="pickSearch"){S.picking.query=e.target.value;S.picking.page=1;scheduleSearchRefresh(e.target,"outbound-pick")}if(e.target.id==="picklistAssignmentSearch"){S.picklistAssignment.query=e.target.value;S.picklistAssignment.page=1;scheduleSearchRefresh(e.target,"outbound-picklist-assignment")}});
-document.addEventListener("change",e=>{if(e.target.id==="pickFloor"){S.picking.floor=e.target.value;S.picking.page=1;show("outbound-pick",1)}if(e.target.id==="pickStatus"){S.picking.status=e.target.value;S.picking.page=1;show("outbound-pick",1)}if(e.target.id==="picklistAssignmentChecker"){S.picklistAssignment.checkerId=e.target.value;show("outbound-picklist-assignment",1)}if(e.target.id==="picklistAssignmentDate"){S.picklistAssignment.date=e.target.value;S.picklistAssignment.page=1;show("outbound-picklist-assignment",1)}});
+document.addEventListener("input",e=>{if(e.target.id==="pickSearch"){S.picking.query=e.target.value;S.picking.page=1;scheduleSearchRefresh(e.target,"outbound-pick")}});
+document.addEventListener("change",e=>{if(e.target.id==="pickFloor"){S.picking.floor=e.target.value;S.picking.page=1;show("outbound-pick",1)}if(e.target.id==="pickStatus"){S.picking.status=e.target.value;S.picking.page=1;show("outbound-pick",1)}});
 document.addEventListener("submit",e=>{
 if(e.target.id!=="userform")return;
 e.preventDefault();
@@ -3461,13 +3361,14 @@ if(persisted)toast(`${displayName} and its role display names were updated.`);
 return;
 }
 if(e.target.id==="df"){e.preventDefault();if(P().role!=="Super Admin"){toast("Only a Super Admin can add sub-departments.");return}const data=new FormData(e.target),department=String(data.get("department")).trim(),name=String(data.get("subdepartment")).trim(),managerTitle=String(data.get("managerLabel")).trim(),staffTitle=String(data.get("staffLabel")).trim(),target=depts.find(item=>item.n===department);if(!USER_DEPARTMENTS.includes(department)||!target){toast("Choose one of the existing departments.");return}if(!name){toast("Enter a sub-department name.");return}if(USER_SUBDEPARTMENTS[department].some(subdepartment=>subdepartment.toLowerCase()===name.toLowerCase()||subdepartmentLabel(department,subdepartment).toLowerCase()===name.toLowerCase())){toast("That sub-department already exists in this department.");return}TERMS.subdepartments[department][name]=name;TERMS.managerLabels[department][name]=managerTitle;TERMS.workLabels[department][name]=staffTitle;TERMS.subdepartmentEnabled[department][name]=true;USER_SUBDEPARTMENTS[department].push(name);target.s.push([name,"—",0,1]);for(const role of ["Head","Manager","Staff"]){const source=Object.entries(ROLE_PAGE_ACCESS).find(([key])=>key.startsWith(`${department}|`)&&key.endsWith(`|${role}`))?.[1];ROLE_PAGE_ACCESS[`${department}|${name}|${role}`]={...(source||{})}}saveRolePageAccess();persistOrgTerms();$("#m").innerHTML="";show(S.page,1);toast(`${name} added to ${departmentLabel(department)}. Configure its page access in Roles & permissions.`)}});
-document.addEventListener("input",e=>{if(e.target.id==="checkerLookupSearch"){S.checkerLookup.query=e.target.value;S.checkerLookup.page=1;scheduleSearchRefresh(e.target,"outbound-check-lookup")}if(e.target.id==="submissionSearch"){S.submission.query=e.target.value;S.submission.page=1;scheduleSearchRefresh(e.target,"outbound-submission")}if(e.target.id==="reportDeviceFleetSearch"){S.deviceFleet.query=e.target.value;scheduleSearchRefresh(e.target,"reports")}if(e.target.id==="invoiceSearch"){S.orderInvoice.query=e.target.value;S.orderInvoice.page=1;scheduleSearchRefresh(e.target,"outbound-orders")}if(e.target.id==="q"){S.q=e.target.value;if(S.page==="md-device")S.device.page=1;if(S.page==="md-batch")S.batch.page=1;scheduleSearchRefresh(e.target,S.page)}
+document.addEventListener("input",e=>{if(e.target.id==="checkerLookupSearch"){S.checkerLookup.query=e.target.value;S.checkerLookup.page=1;scheduleSearchRefresh(e.target,"outbound-check-lookup")}if(e.target.id==="reportDeviceFleetSearch"){S.deviceFleet.query=e.target.value;scheduleSearchRefresh(e.target,"reports")}if(e.target.id==="invoiceSearch"){S.orderInvoice.query=e.target.value;S.orderInvoice.page=1;scheduleSearchRefresh(e.target,"outbound-orders")}if(e.target.id==="q"){S.q=e.target.value;if(S.page==="md-device")S.device.page=1;if(S.page==="md-batch")S.batch.page=1;scheduleSearchRefresh(e.target,S.page)}
 if(e.target.classList.contains("lq")){S.lg.q=e.target.value;scheduleSearchRefresh(e.target,S.page)}});
 document.addEventListener("change",e=>{
 if(e.target.id==="dayEndDate"){S.dayEnd.date=e.target.value;S.dayEnd.page=1;show("day-end",1)}
-if(e.target.dataset.a==="checker-lookup-date"){S.checkerLookup.date=e.target.value;S.checkerLookup.page=1;S.submission.page=1;show("outbound-check-lookup",1)}
+if(e.target.dataset.a==="checker-lookup-date"){S.checkerLookup.date=e.target.value;S.checkerLookup.page=1;show("outbound-check-lookup",1)}
 if(e.target.dataset.a==="checker-lookup-status"){S.checkerLookup.status=e.target.value;S.checkerLookup.page=1;show("outbound-check-lookup",1)}
 if(e.target.dataset.a==="checker-lookup-checker"){S.checkerLookup.checker=e.target.value;S.checkerLookup.page=1;show("outbound-check-lookup",1)}
+if(e.target.id==="checkerLookupAssignTo"){S.checkerLookup.assignCheckerId=e.target.value;show("outbound-check-lookup",1)}
 if(e.target.id==="userRole"){
 const policy=userCreationPolicy(),role=$("#userRole"),dept=$("#userDepartment");
 dept.disabled=Boolean(policy.fixedDepartment)||role.value==="Super Admin";
