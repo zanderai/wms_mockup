@@ -1720,7 +1720,7 @@ const MASTER_COLUMN_DEFS={
 "md-product":[["c0","Product Code"],["c1","Product Name"],["c2","Manufacturer ID"],["c3","Case Quantity"],["c4","Box Quantity"],["warehouse","Warehouse"],["employee","Employee"],["status","Status"],["action","Action"]],
 "md-batch":[["serial","S.No"],["productCode","Product Code"],["productName","Product Name"],["batchCode","Batch Code"],["batchNumber","Batch No."],["manufacturer","Manufacturer"],["mrp","MRP"],["expiryDate","Expiry Date"],["boxQuantity","Box Quantity"],["stock","Stock Qty"],["createdOn","Date"],["purchasePrice","Purchase Price"],["salePrice","Sale Price"],["gstPercentage","GST Percentage"],["lastReceivedDate","Last Received Date"],["stockLocation","Stock Location"],["unit","Unit"],["status","Status"],["action","Action"]],
 "md-device":[["serial","S.No"],["deviceId","Device ID"],["deviceName","Device Name"],["url","URL"],["userNames","Users"],["scannerType","Scanner Type"],["application","Application"],["ip","IP Address"],["port","Port"],["protocol","Protocol"],["station","Station"],["allocatorUrl","Allocator URL"],["status","Status"],["action","Action"]],
-"md-checker":[["c0","Checker"],["c1","Shift"],["c2","Checks today"],["warehouse","Warehouse"],["employee","Employee"],["status","Status"],["action","Action"]],
+"md-checker":[["c0","Checker"],["c1","Shift"],["c2","Checks today"],["status","Status"],["action","Action"]],
 "md-manufacturer":[["c0","Manufacturer ID"],["c1","Manufacturer Name"],["c2","Short Name"],["c3","Email"],["c4","Mobile"],["c5","Headquarters"],["warehouse","Warehouse"],["employee","Employee"],["status","Status"],["action","Action"]],
 "md-tray":[["apiId","ID"],["trayId","Tray ID"],["trayName","Tray Name"],["createdOn","Created on"],["modifiedOn","Modified on"],["createdBy","Created by"],["modifiedBy","Modified by"],["versionNo","Version"],["tenantId","Tenant ID"],["status","Status"],["action","Action"]]
 };
@@ -1728,7 +1728,7 @@ const MASTER_COLUMN_DEFAULTS={
 "md-product":["c0","c1","c2","c3","c4","warehouse","status","action"],
 "md-batch":["serial","productCode","productName","batchCode","batchNumber","manufacturer","mrp","expiryDate","boxQuantity","stock","createdOn","status","action"],
 "md-device":["serial","deviceId","deviceName","url","userNames","scannerType","application","status","action"],
-"md-checker":["c0","c1","c2","warehouse","status","action"],
+"md-checker":["c0","c1","c2","status","action"],
 "md-manufacturer":["c0","c1","c2","c3","c4","c5","warehouse","status","action"],
 "md-tray":["apiId","trayId","trayName","status","action"]
 };
@@ -2712,8 +2712,18 @@ if(id==="admin-users"){const user=ASG.find(x=>x.k===r.id||x.name===r.id||x.name=
 if((a[4]||"").includes("l")){const n="LT-"+(90416+pages["inventory-ledger"].rows.length);pages["inventory-ledger"].rows.unshift({id:n,c:[n,LT[id],"Per lines of "+r.id,"—","per lines",r.id],wh:r.wh,who:P().name,st:"Posted",note:""})}
 aud.unshift({t:"Now",d:0,actor:P().name,action:a[0],rec:r.id,mod:pg.mod==="core"?"admin":pg.mod,out:"Success",msg:(a[2]?"Status → "+a[2]+". ":"")+((a[4]||"").includes("l")?"Ledger entry written.":"")});
 $("#m").innerHTML="";show(S.page,1);toast(`${a[0]} done for ${r.id}. Audit event written.`)}
-function newRow(id){if(!hasG(id,"c")){toast("You do not have permission to create records here.");return}if(id==="admin-users"){newUserForm();return}const pg=pages[id],ok=allowedWh(),first=pg.rows[0].id,num=(first.match(/\d+$/)||["1"])[0];
+function newRow(id){if(!hasG(id,"c")){toast("You do not have permission to create records here.");return}if(id==="admin-users"){newUserForm();return}if(id==="md-checker"){newCheckerForm();return}const pg=pages[id],ok=allowedWh(),first=pg.rows[0].id,num=(first.match(/\d+$/)||["1"])[0];
 $("#m").innerHTML=`<div class="mb" data-a="close"><form class="md" id="nf" data-pg="${id}"><div class="mh"><h2>New · ${esc(fulfillmentText(pg.title))}</h2><button type="button" data-a="close" aria-label="Close">×</button></div><div class="mbd">${pg.cols.map((c,i)=>{const[l,o]=c.split(":");return`<div class="field"><label>${esc(fulfillmentText(l))}</label>${o?`<select name="f${i}">${o.split("/").map(x=>`<option>${esc(fulfillmentText(x))}</option>`).join("")}</select>`:`<input name="f${i}" ${i?"":`value="${esc(first.replace(/\d+$/,String(+num+1)))}"`} required>`}</div>`}).join("")}<div class="field"><label>Warehouse</label><select name="wh">${ok.map(w=>`<option>${w}</option>`).join("")}</select></div></div><div class="mf"><button type="button" class="btn" data-a="close">Cancel</button><button class="btn p">Save</button></div></form></div>`}
+function newCheckerForm(){
+if(!masterCan("md-checker","c")){toast("You do not have permission to add checkers.");return}
+$("#m").innerHTML=`<div class="mb" data-a="close"><form class="md user-create" id="checkerform"><div class="mh"><h2>New · Checker Master</h2><button type="button" data-a="close" aria-label="Close">×</button></div><div class="mbd">
+<p class="settings-term-note">This account will be created as Staff in Outbound · Checking.</p>
+<section class="user-form-section"><h3>Account Information</h3><div class="user-form-grid"><div class="field"><label for="checkerUserId">${esc(termLabel("user"))} ID *</label><input id="checkerUserId" name="userId" placeholder="Enter ${esc(termLabel("user").toLowerCase())} ID" autocomplete="username" required></div><div class="field"><label for="checkerEmail">Email Address</label><input id="checkerEmail" name="email" type="email" placeholder="Enter email address" autocomplete="email"></div></div></section>
+<section class="user-form-section"><h3>Personal Information</h3><div class="user-form-grid"><div class="field"><label for="checkerFirst">First Name *</label><input id="checkerFirst" name="firstName" placeholder="Enter first name" required></div><div class="field"><label for="checkerLast">Last Name</label><input id="checkerLast" name="lastName" placeholder="Enter last name"></div><div class="field user-field-wide"><label for="checkerPassword">Password *</label><input id="checkerPassword" name="password" type="password" placeholder="Enter password" minlength="8" autocomplete="new-password" required></div></div></section>
+<section class="user-form-section"><h3>Contact Information</h3><div class="user-form-grid"><div class="field"><label for="checkerCode">Code</label><select id="checkerCode" name="code"><option value="">No code</option><option value="+91">+91</option><option value="+1">+1</option><option value="+44">+44</option><option value="+61">+61</option></select></div><div class="field"><label for="checkerPhone">Phone Number *</label><input id="checkerPhone" name="phone" type="tel" placeholder="Enter contact number" required></div><div class="field"><label for="checkerStatus">Status</label><input id="checkerStatus" value="Inactive" disabled></div></div></section>
+</div><div class="mf"><button type="button" class="btn" data-a="close">Cancel</button><button class="btn p">Create checker</button></div></form></div>`;
+$("#checkerUserId").focus();
+}
 function newUserForm(){
 const policy=userCreationPolicy();
 if(!policy.roles.length){toast("Your role cannot create users.");return}
@@ -3315,6 +3325,26 @@ importer(file).catch(error=>{console.warn(`Could not import ${kind} CSV.`,error)
 });
 document.addEventListener("input",e=>{if(e.target.id==="pickSearch"){S.picking.query=e.target.value;S.picking.page=1;scheduleSearchRefresh(e.target,"outbound-pick")}});
 document.addEventListener("change",e=>{if(e.target.id==="pickFloor"){S.picking.floor=e.target.value;S.picking.page=1;show("outbound-pick",1)}if(e.target.id==="pickStatus"){S.picking.status=e.target.value;S.picking.page=1;show("outbound-pick",1)}});
+document.addEventListener("submit",e=>{
+if(e.target.id!=="checkerform")return;
+e.preventDefault();
+e.stopImmediatePropagation();
+if(!masterCan("md-checker","c")){toast("You do not have permission to add checkers.");return}
+const data=new FormData(e.target),userId=String(data.get("userId")).trim(),email=String(data.get("email")).trim().toLowerCase(),first=String(data.get("firstName")).trim(),last=String(data.get("lastName")).trim(),name=[first,last].filter(Boolean).join(" "),password=String(data.get("password")),phone=String(data.get("phone")).trim(),phoneCode=String(data.get("code"));
+if(!userId||!first||!password||password.length<8||!phone){toast("Enter a user ID, first name, password of at least 8 characters, and phone number.");return}
+if(ASG.some(user=>user.userId?.toLowerCase()===userId.toLowerCase())){toast("A user with that ID already exists.");return}
+if(ASG.some(user=>user.name.toLowerCase()===name.toLowerCase())){toast("A user with that name already exists.");return}
+if(email&&ASG.some(user=>(user.email||user.name.toLowerCase().replace(/\s+/g,".")+"@acme.example").toLowerCase()===email)){toast("A user with that email address already exists.");return}
+const source=ASG.find(user=>user.dept==="Outbound"&&user.sub==="Checking"&&user.role==="Staff"),key="checker-"+Date.now(),wh=[...allowedWh()],pageAccess={...(ROLE_PAGE_ACCESS["Outbound|Checking|Staff"]||source?.g||{})};
+const user={k:key,userId,email,name,first,last,password,role:"Staff",dept:"Outbound",sub:"Checking",wh,scope:"Own records",status:"Inactive",source:"Manual",phoneCode,phone,g:pageAccess,createdBy:P().k};
+ASG.push(user);
+pages["md-checker"].rows.unshift({id:key,c:[name,"—","0"],wh:wh[0]||WHS[0],who:"—",st:"Inactive",note:"",checkerSource:"Manual"});
+refreshUserSelectors();
+aud.unshift({t:"Now",d:0,actor:P().name,action:"Checker created",rec:name,mod:"admin",out:"Success",msg:"Created an inactive Staff account assigned to Outbound · Checking."});
+$("#m").innerHTML="";
+show("md-checker",1);
+toast(`${name} created as an inactive Outbound checker.`);
+});
 document.addEventListener("submit",e=>{
 if(e.target.id!=="userform")return;
 e.preventDefault();
